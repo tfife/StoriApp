@@ -1,0 +1,80 @@
+﻿<Page
+    x:Class="Stori.Timeline"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Stori"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid Background="LightGray">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="Welcome to the Timeline" FontSize="50"/>
+                <TextBlock Grid.Row="1" Text="Side Nav" FontSize="50"/>
+            </Grid>
+            <Grid Grid.Column="1" Background="WhiteSmoke">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock
+                    Grid.Row="0"
+                    x:Name="TimelineLabelTextBlock"
+                    FontSize="24"
+                    HorizontalAlignment="Center"/>
+                <Grid Grid.Row="1"
+                      Background="WhiteSmoke">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button
+                        Grid.Column="0"
+                        x:Name="TimelinePreviousButton"
+                        Height="800" 
+                        Content="Prev"
+                        Padding="10"
+                        Background="WhiteSmoke"
+                        Click="TimelinePreviousButton_Click"/>
+                    <Button 
+                        Grid.Column="2"
+                        x:Name="TimelineNextButton"
+                        Height="800"
+                        Content="Next"
+                        Padding="10"
+                        Background="WhiteSmoke"
+                        Click="TimelineNextButton_Click"/>
+
+                    <ScrollViewer
+                        Grid.Column="1"
+                        x:Name="ScrollableCanvasContainer"
+                        Background="White"
+                        HorizontalScrollBarVisibility="Auto"
+                        VerticalScrollBarVisibility="Auto"
+                        HorizontalAlignment="Center"/>
+                </Grid>
+                
+                
+                <!--<ListView
+                    x:Name="ListView1"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                    ScrollViewer.HorizontalScrollMode="Enabled"
+                    ScrollViewer.IsHorizontalRailEnabled="True"
+                    Background="Gray" 
+                    VerticalAlignment="Center">
+                    <StackPanel x:Name="TimelineStackPanel" Orientation="Horizontal" VerticalAlignment="Center"/>
+                </ListView> -->
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>
