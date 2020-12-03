@@ -1,0 +1,71 @@
+﻿<Page
+    x:Class="Stori.CreateTimeline2"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Stori"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <ScrollViewer>
+            <StackPanel>
+                <TextBlock FontSize="36" Text="Ok, let's add some more information about"/>
+                <TextBlock FontSize="24" FontWeight="Bold" x:Name="TimelineName"/>
+
+                <TextBlock FontSize="36" Text="Time of Day"/>
+                <TextBlock FontSize="24" Text="The smallest significant unit of time is a(n)"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="NameSecond" Width="300" Text="second"/>
+                    <TextBlock FontSize="24" Text=", of which there are "/>
+                    <muxc:NumberBox x:Name="NumSeconds" Value="60" Minimum="2"/>
+                    <TextBlock FontSize="24" Text=" in a(n)"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="NameMinute" Width="300" Text="minute"/>
+                    <TextBlock FontSize="24" Text=", of which there are "/>
+                    <muxc:NumberBox x:Name="NumMinutes" Value="60" Minimum="2"/>
+                    <TextBlock FontSize="24" Text=" in a(n)"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="NameHour" Width="300" Text="hour"/>
+                    <TextBlock FontSize="24" Text=", of which there are "/>
+                    <muxc:NumberBox x:Name="NumHours" Value="24" Minimum="2"/>
+                    <TextBlock FontSize="24" Text=" in a(n)"/>
+                </StackPanel>
+                <TextBlock FontSize="36" Text="Day"/>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="NameDay" Width="300" Text="day"/>
+                    <TextBlock FontSize="24" Text=", of which there are "/>
+                    <muxc:NumberBox x:Name="NumDays" IsEnabled="False" Minimum="2"/>
+                    <CheckBox x:Name="VariableDaysCheckBox" IsChecked="True" Content="variable" Click="CheckBox_Click"/>
+                    <TextBlock FontSize="24" Text=" in a(n)"/>
+                </StackPanel>
+                <TextBlock FontSize="36" Text="Groups of Days"/>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="NameMonth" Width="300" Text="month"/>
+                    <TextBlock FontSize="24" Text=", of which there are "/>
+                    <muxc:NumberBox x:Name="NumMonths" Value="12" Minimum="2"/>
+                    <TextBlock FontSize="24" Text=" in a(n)"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="NameYear" Width="300" Text="year"/>
+                    <TextBlock FontSize="24" Text="."/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="CancelButton" Click="BackButton_Click" Content="Cancel"/>
+                    <Button x:Name="NextButton" Click="NextButton_Click"  Content="Next"/>
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

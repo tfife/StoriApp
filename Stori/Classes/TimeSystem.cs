@@ -8,7 +8,7 @@ namespace Stori.Classes
 {
     class TimeSystem
     {
-        public string eoYear, eoMonth, eoDay, eoHour, eoMinute, eoSecond;
+        public string eoYear, eoMonth, eoDay, eoHour, eoMinute, eoSecond, name;
         public int monInYear, hourInDay, minInHour, secInMin;
         public bool customTime = true;
         public List<string> monNames, dayNames;
@@ -29,7 +29,8 @@ namespace Stori.Classes
             bool customTime = true,
             List<string> monNames = null,
             List<string> dayNames = null,
-            List<int> daysInMonths = null) 
+            List<int> daysInMonths = null, 
+            string name = "My Timeline") 
         {
             this.eoYear = eoYear;
             this.eoMonth = eoMonth;
@@ -45,11 +46,22 @@ namespace Stori.Classes
             this.monNames = monNames;
             this.dayNames = dayNames;
             this.daysInMonths = daysInMonths;
+            this.name = name;
         }
 
         public TimeSystem()
         {
             this.customTime = false;
+        }
+
+        public int getAverageDaysInMonths()
+        {
+            int totalDays = 0;
+            for (int i = 0; i < monInYear; i++)
+            {
+                totalDays += daysInMonths[i];
+            }
+            return totalDays / monInYear;
         }
     }
 }

@@ -48,13 +48,14 @@ namespace Stori.Classes
 
         public void AddMonths(int numMonths)
         {
-            //add multiple years
+            //add months
             this.month += numMonths;
+            
             //handle overflowing into a new year
-            if(this.month > this.timeSystem.monInYear)
+            while(this.month > this.timeSystem.monInYear)
             {
-                this.AddYears(this.month / this.timeSystem.monInYear);
-                this.month %= this.timeSystem.monInYear;
+                this.month -= this.timeSystem.monInYear;
+                this.AddYears(1);
             }
             //handle months with fewer days than the original date
             if(this.day > this.timeSystem.daysInMonths[this.month - 1])

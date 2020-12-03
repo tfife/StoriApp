@@ -31,5 +31,10 @@ namespace Stori
         {
             this.Frame.Navigate(typeof(Timeline));
         }
+
+        private void NavigateToTimelineCreation(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(CreateTimeline1));
+        }
     }
 }

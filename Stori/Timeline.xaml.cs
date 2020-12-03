@@ -50,24 +50,19 @@ namespace Stori
                 "hour",
                 "minute",
                 "second",
-                //12,
-                //24,
-                //60,
-                //60,
-                10,
-                10,
-                10,
-                10,
+                12,
+                24,
+                60,
+                60,
                 true,
                 new List<string>() { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" },
                 new List<string>() { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" },
-                //new List<int>() { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
-                new List<int>() { 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20 });
+                new List<int>() { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 });
             
             Classes.CustomDateTime startDate = new Classes.CustomDateTime(timeSystem, 2020, 1, 1, dayNameIndex: 3);
             Classes.CustomDateTime endDate = new Classes.CustomDateTime(timeSystem, 2121, 3, 31);
 
-            timeline = new Classes.Timeline(startDate, endDate, 3, timeSystem, currentZoomLevel: Classes.Timeline.ZoomLevel.HourMinute);
+            timeline = new Classes.Timeline(startDate, endDate, 3, timeSystem, currentZoomLevel: Classes.Timeline.ZoomLevel.YearMonth);
 
             tlCanvas = new Canvas
             { 
@@ -138,7 +133,7 @@ namespace Stori
                         DateTickClicked(refDateTime.GetDateTime());
                     };
 
-                    Canvas.SetTop(topLabel, timelineTopPadding - tickHeight - 22);
+                    Canvas.SetTop(topLabel, timelineTopPadding - tickHeight - 48);
                     Canvas.SetLeft(topLabel, offset - 50);
                     tlCanvas.Children.Add(topLabel);
                 }

@@ -13,7 +13,7 @@ namespace Stori.Classes
         public TimeSystem timeSystem;
         public ZoomLevel defaultZoomLevel;
         private ZoomLevel currentZoomLevel;
-        private int ticksPerPage;
+        private int idealTicksPerPage;
 
         public List<CustomDateTime> pageStartDates = new List<CustomDateTime>();
         public List<CustomDateTime> pageEndDates = new List<CustomDateTime>();
@@ -35,7 +35,7 @@ namespace Stori.Classes
             this.events = events;
             this.defaultZoomLevel = defaultZoomLevel;
             this.currentZoomLevel = currentZoomLevel;
-            this.ticksPerPage = ticksPerPage;
+            this.idealTicksPerPage = ticksPerPage;
 
             AssignPagesForZoomLevel();
         }
@@ -50,27 +50,27 @@ namespace Stori.Classes
             YearMonth
         }
 
-        public void IterateTickCustomDateTime(CustomDateTime currentDateTime)
+        public void IterateTickCustomDateTime(CustomDateTime currentDateTime, int count = 1)
         {
             switch (currentZoomLevel)
             {
                 case ZoomLevel.MinuteSecond:
-                    currentDateTime.AddSeconds(1);
+                    currentDateTime.AddSeconds(count);
                     break;
                 case ZoomLevel.HourMinute:
-                    currentDateTime.AddMinutes(1);
+                    currentDateTime.AddMinutes(count);
                     break;
                 case ZoomLevel.DayHour:
-                    currentDateTime.AddHours(1);
+                    currentDateTime.AddHours(count);
                     break;
                 case ZoomLevel.MonthDay:
-                    currentDateTime.AddDays(1);
+                    currentDateTime.AddDays(count);
                     break;
                 case ZoomLevel.YearMonth:
-                    currentDateTime.AddMonths(1);
+                    currentDateTime.AddMonths(count);
                     break;
                 default:
-                    currentDateTime.AddYears(1);
+                    currentDateTime.AddYears(count);
                     break;
             }
         }
@@ -80,17 +80,17 @@ namespace Stori.Classes
             switch (currentZoomLevel)
             {
                 case ZoomLevel.MinuteSecond:
-                    return (date.second == 0);
+                    return date.second == 0;
                 case ZoomLevel.HourMinute:
-                    return (date.minute == 0);
+                    return date.minute == 0;
                 case ZoomLevel.DayHour:
-                    return (date.hour == 0);
+                    return date.hour == 0;
                 case ZoomLevel.MonthDay:
-                    return (date.day == 0);
+                    return date.day == 1;
                 case ZoomLevel.YearMonth:
-                    return (date.month) == 0;
+                    return date.month == 1;
                 default:
-                    return (date.year % 10 == 0);
+                    return date.year % 10 == 0;
             }
         }
 
@@ -99,17 +99,17 @@ namespace Stori.Classes
             switch (currentZoomLevel)
             {
                 case ZoomLevel.MinuteSecond:
-                    return date.second.ToString("00");
+                    return "\n" + date.second.ToString("00");
                 case ZoomLevel.HourMinute:
-                    return date.hour.ToString() + ":" + date.minute.ToString("00");
+                    return "\n" + date.hour.ToString() + ":" + date.minute.ToString("00");
                 case ZoomLevel.DayHour:
-                    return date.hour.ToString() + ":00";
+                    return "\n" + date.hour.ToString() + ":00";
                 case ZoomLevel.MonthDay:
-                    return date.day.ToString() + " (" + date.GetDayName().Substring(0, 3) + ")";
+                    return date.day.ToString() + "\n(" + date.GetDayName().Substring(0, 3) + ")";
                 case ZoomLevel.YearMonth:
-                    return "(" + date.GetMonthName().Substring(0, 3) + ")";
+                    return "\n" + date.GetMonthName().Substring(0, 3);
                 default:
-                    return date.year.ToString();
+                    return "\n" + date.year.ToString();
             }
         }
 
@@ -151,28 +151,101 @@ namespace Stori.Classes
                 pageLabels.Clear();
             }
 
-            int tickCount = 0;
-            while (refDateTime <= endDateTime)
+            if (this.currentZoomLevel == ZoomLevel.MonthDay)
             {
-                if (tickCount == 0)
+                while (refDateTime <= endDateTime)
                 {
                     pageStartDates.Add(refDateTime.GetDateTime());
-                }
-                tickCount++;
-                if (tickCount >= ticksPerPage)
-                {
+                    IterateTickCustomDateTime(refDateTime, getPageTickCountForMonths(refDateTime.GetDateTime()) - 1);
+                    //add the last day to pageEndDates
                     pageEndDates.Add(refDateTime.GetDateTime());
-                    tickCount = 0;
+                    //iterate to the first day of the next cycle
+                    IterateTickCustomDateTime(refDateTime);
                 }
-                IterateTickCustomDateTime(refDateTime);
+
+                AssignPageLabelsForZoomLevel();
+                return;
             }
 
-            //if we didn't get all the way to the last tick of the last page, add last end date
-            if (pageEndDates.Last() != endDateTime)
+            int ticksPerPage = getBestPageTickCount();
+
+            while (refDateTime <= endDateTime)
             {
-                pageEndDates.Add(endDateTime);
+                //add the initial date to pageStartDates
+                pageStartDates.Add(refDateTime.GetDateTime());
+                //iterate to the last datetime before the next page starts
+                IterateTickCustomDateTime(refDateTime, ticksPerPage - 1);
+                //add the last day to pageEndDates
+                pageEndDates.Add(refDateTime.GetDateTime());
+                //iterate to the first day of the next cycle
+                IterateTickCustomDateTime(refDateTime);
             }
             AssignPageLabelsForZoomLevel();
+        }
+
+        public int getBestPageTickCount()
+        {
+            int smallInBig = 0;
+            switch (currentZoomLevel)
+            {
+                case ZoomLevel.MinuteSecond:
+                    smallInBig = this.timeSystem.secInMin;
+                    break; 
+                case ZoomLevel.HourMinute:
+                    smallInBig = this.timeSystem.minInHour;
+                    break;
+                case ZoomLevel.DayHour:
+                    smallInBig = this.timeSystem.hourInDay;
+                    break;
+                case ZoomLevel.MonthDay:
+                    smallInBig = 0;
+                    break;
+                case ZoomLevel.YearMonth:
+                    smallInBig = this.timeSystem.monInYear;
+                    break;
+                default:
+                    smallInBig = 10;
+                    break;
+            }
+            
+            int nextSmaller = (idealTicksPerPage / smallInBig) * smallInBig;
+            int nextLarger = nextSmaller + smallInBig;
+            int differenceDown = idealTicksPerPage - nextSmaller;
+            int differenceUp = nextLarger - idealTicksPerPage;
+
+            //if the difference between the larger
+            if (differenceDown <= differenceUp && nextSmaller != 0)
+            {
+                return nextSmaller;
+            } 
+            else
+            {
+                return nextLarger;
+            }
+        }
+
+        private int getPageTickCountForMonths(CustomDateTime startDate)
+        {
+            int ticks = 0;
+            while (ticks < idealTicksPerPage)
+            {
+                ticks += this.timeSystem.daysInMonths[startDate.month - 1];
+                IterateTickCustomDateTime(startDate, this.timeSystem.daysInMonths[startDate.month - 1]);
+            }
+            int nextSmaller = ticks;
+            int nextLarger = nextSmaller + this.timeSystem.daysInMonths[startDate.month - 1];
+            int differenceDown = idealTicksPerPage - nextSmaller;
+            int differenceUp = nextLarger - idealTicksPerPage;
+
+            //if the difference between the larger
+            if (differenceDown <= differenceUp && nextSmaller != 0)
+            {
+                return nextSmaller;
+            }
+            else
+            {
+                return nextLarger;
+            }
         }
 
         public void AssignPageLabelsForZoomLevel()
@@ -258,9 +331,9 @@ namespace Stori.Classes
             AssignPagesForZoomLevel();
         }
 
-        public void SetTicksPerPage(int ticks)
+        public void SetIdealTicksPerPage(int ticks)
         {
-            this.ticksPerPage = ticks;
+            this.idealTicksPerPage = ticks;
             AssignPagesForZoomLevel();
         }
 
