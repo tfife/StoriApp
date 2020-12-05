@@ -125,8 +125,9 @@ namespace Stori
                 NameDay.Focus(FocusState.Programmatic);
                 return false;
             }
-            if (NumSeconds.IsEnabled && (int)NumDays.Value < 2)
+            if (VariableDaysCheckBox.IsChecked == false && (int)NumDays.Value < 2)
             {
+                NumDays.IsEnabled = true;
                 NumDays.Focus(FocusState.Programmatic);
                 return false;
             }

@@ -61,7 +61,7 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
-                    <Button x:Name="CancelButton" Click="BackButton_Click" Content="Cancel"/>
+                    <Button x:Name="BackButton" Click="BackButton_Click" Content="Back"/>
                     <Button x:Name="NextButton" Click="NextButton_Click"  Content="Next"/>
                 </StackPanel>
 
