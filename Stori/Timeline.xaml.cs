@@ -42,38 +42,26 @@ namespace Stori
         {
             this.InitializeComponent();
 
-
-            Classes.TimeSystem timeSystem = new Classes.TimeSystem(
-                "year",
-                "month",
-                "day",
-                "hour",
-                "minute",
-                "second",
-                12,
-                24,
-                60,
-                60,
-                true,
-                new List<string>() { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" },
-                new List<string>() { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" },
-                new List<int>() { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 });
-            
-            Classes.CustomDateTime startDate = new Classes.CustomDateTime(timeSystem, 2020, 1, 1, dayNameIndex: 3);
-            Classes.CustomDateTime endDate = new Classes.CustomDateTime(timeSystem, 2121, 3, 31);
-
-            timeline = new Classes.Timeline(startDate, endDate, 3, timeSystem, currentZoomLevel: Classes.Timeline.ZoomLevel.YearMonth);
-
             tlCanvas = new Canvas
-            { 
+            {
                 Height = getTimelineHeight(),
                 Width = timelineWidth,
             };
-
-            populateTimeline();
-            scrollToBottom();
-            populateEvents();
             
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (e.Parameter is Classes.Timeline)
+            {
+                this.timeline = (Classes.Timeline)e.Parameter;
+
+                populateTimeline();
+                scrollToBottom();
+                populateEvents();
+            }
+            base.OnNavigatedTo(e);
+
         }
 
         int getTimelineHeight()

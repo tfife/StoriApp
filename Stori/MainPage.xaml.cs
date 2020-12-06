@@ -27,14 +27,20 @@ namespace Stori
             this.InitializeComponent();
         }
 
-        private void NavigateToTimeline(object sender, RoutedEventArgs e)
+        private void Timeline_Click(object sender, RoutedEventArgs e)
         {
+
             this.Frame.Navigate(typeof(Timeline));
         }
 
-        private void NavigateToTimelineCreation(object sender, RoutedEventArgs e)
+        private void NewTimeline_Click(object sender, RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(CreateTimeline1));
+        }
+
+        private void NavigateToTimeline(Classes.Timeline timeline)
+        {
+            this.Frame.Navigate(typeof(Timeline));
         }
     }
 }

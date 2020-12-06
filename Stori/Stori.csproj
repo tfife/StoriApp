@@ -122,6 +122,7 @@
     <Compile Include="Classes\CustomDateTime.cs" />
     <Compile Include="Classes\Event.cs" />
     <Compile Include="Classes\Timeline.cs" />
+    <Compile Include="Classes\TimelineDataAccess.cs" />
     <Compile Include="Classes\TimeSystem.cs" />
     <Compile Include="CreateTimeline1.xaml.cs">
       <DependentUpon>CreateTimeline1.xaml</DependentUpon>
@@ -197,6 +198,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
       <Version>2.4.3</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.3</Version>
     </PackageReference>
     <PackageReference Include="SQLitePCLRaw.bundle_winsqlite3">
       <Version>2.0.4</Version>

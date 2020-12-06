@@ -13,6 +13,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using muxc = Microsoft.UI.Xaml.Controls;
+using Newtonsoft.Json;
+using Windows.Storage;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 namespace Stori
@@ -23,7 +25,7 @@ namespace Stori
     public sealed partial class CreateTimeline4 : Page
     {
         Classes.TimeSystem timeSystem;
-
+        
         public CreateTimeline4()
         {
             this.InitializeComponent();
@@ -41,7 +43,7 @@ namespace Stori
 
         private void populateRows()
         {
-            for (int i = 1; i <= this.timeSystem.daysInMonths.Count; i++)
+            for (int i = 1; i <= this.timeSystem.monInYear; i++)
             {
                 int num; 
 
@@ -133,8 +135,27 @@ namespace Stori
                     this.timeSystem.daysInMonths.Add((int)((muxc.NumberBox)panel.Children[1]).Value);
                 }
 
-                this.Frame.Navigate(typeof(CreateTimeline4), timeSystem);
+                this.SaveAndShowTimeline();
             }
+        }
+
+        private async void SaveAndShowTimeline()
+        {
+            Classes.CustomDateTime startDate = new Classes.CustomDateTime(timeSystem, 2020, 1, 1, dayNameIndex: 3);
+            Classes.CustomDateTime endDate = new Classes.CustomDateTime(timeSystem, 2121, 3, 31);
+
+            Classes.Timeline newTimeline = new Classes.Timeline(
+                startDate,
+                endDate,
+                3,
+                timeSystem,
+                currentZoomLevel: Classes.Timeline.ZoomLevel.YearMonth);
+            Classes.TimelineDataAccess dataAccess = new Classes.TimelineDataAccess();
+
+            await dataAccess.SaveNewTimeline(newTimeline);
+
+            this.Frame.Navigate(typeof(Timeline), newTimeline);
+
         }
 
         private bool validateForm()

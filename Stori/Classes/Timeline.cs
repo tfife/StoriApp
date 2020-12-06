@@ -13,7 +13,7 @@ namespace Stori.Classes
         public TimeSystem timeSystem;
         public ZoomLevel defaultZoomLevel;
         private ZoomLevel currentZoomLevel;
-        private int idealTicksPerPage;
+        public int idealTicksPerPage, timelineId;
 
         public List<CustomDateTime> pageStartDates = new List<CustomDateTime>();
         public List<CustomDateTime> pageEndDates = new List<CustomDateTime>();
@@ -369,7 +369,7 @@ namespace Stori.Classes
         {
             int index = 0;
             //increase index until the ending date is no longer smaller than the desired date
-            while (pageEndDates[index] < date)
+            while (index < pageEndDates.Count() && pageEndDates[index] < date)
             { 
                 index++; 
             }
