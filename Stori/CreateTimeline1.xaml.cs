@@ -53,7 +53,7 @@ namespace Stori
             this.Frame.Navigate(typeof(MainPage));
         }
 
-        private void NextButton_Click(object sender, RoutedEventArgs e)
+        private async void NextButton_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(NewTimelineName.Text))
             {
@@ -69,8 +69,11 @@ namespace Stori
             }
             else
             {
-                this.Frame.Navigate(typeof(MainPage));
-                //TODO Change This to what it should be
+                Classes.TimelineDataAccess dataAccess = new Classes.TimelineDataAccess();
+
+                await dataAccess.SaveNewTimeline(timeSystem);
+
+                this.Frame.Navigate(typeof(AddOrEditEvent), timeSystem);
             }
 
         }

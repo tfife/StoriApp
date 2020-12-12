@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Linq;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -40,9 +41,9 @@ namespace Stori
         Canvas tlCanvas;
         Classes.Timeline timeline;
         List<Classes.Event> allEvents;
+        List<Classes.Event> allEventsByEndDate;
         List<Classes.Event> filteredEvents;
-        List<string> tags;
-        List<string> activeTags;
+        List<Classes.Tag> tags;
 
         Classes.Event selectedEvent;
         Rectangle selectedEventItem;
@@ -61,15 +62,15 @@ namespace Stori
             
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is Classes.TimeSystem)
             {
                 this.timeline = new Classes.Timeline((Classes.TimeSystem)e.Parameter);
 
-                populateTimeline();
-                //scrollToBottom();
-                //populateEvents();
+                await this.GetEventsFromFile();
+                this.PopulateTags();
+                this.FilterEvents();
             }
             base.OnNavigatedTo(e);
 
@@ -80,26 +81,12 @@ namespace Stori
             return timelineBottomPadding + timelineTopPadding + lineWidth;
         }
 
-        async void populateTimeline()
+        void populateTimeline()
         {
             //clear existing canvas
             tlCanvas.Children.Clear();
 
-            await this.getEventsFromFile();
 
-            //if there are no events, just go to the event creation page
-            if (allEvents == null || allEvents.Count == 0)
-            {
-                NavigateToNewEvent();
-                return;
-            }
-            
-            this.allEvents = new List<Classes.Event>(allEvents).OrderBy(o => o.startDateTime).ToList();
-
-            List<Classes.Event> allEventsByEndDate = new List<Classes.Event>(allEvents).OrderBy(o => o.endDateTime).ToList();
-
-            //Debug.WriteLine(allEventsByEndDate.ToString());
-            FilterEvents();
 
             int offset = initialOffset;
             List<int> layerOffsets = new List<int>();
@@ -256,7 +243,7 @@ namespace Stori
 
             //Debug.WriteLine("about to enter end day loop");
             //repeat adding ticks until the latest end date
-            while (refDateTime <= allEventsByEndDate[allEventsByEndDate.Count - 1].endDateTime)
+            while (refDateTime <= this.allEventsByEndDate[allEventsByEndDate.Count - 1].endDateTime)
             {
                 //Debug.WriteLine("begin end day loop");
                 //Debug.WriteLine("end date month =" + allEventsByEndDate[allEventsByEndDate.Count - 1].endDateTime.month.ToString());
@@ -459,11 +446,69 @@ namespace Stori
             scrollToBottom();
         }
 
-        async Task getEventsFromFile()
+        async Task GetEventsFromFile()
         {
             this.allEvents = await dataAccess.getAllEventsForTimeline(this.timeline.timeSystem);
+        }
 
-            Debug.WriteLine("inside getEventsFromFile");
+        private void PopulateTags()
+        {
+            if (this.tags is null)
+            {
+                this.tags = new List<Classes.Tag>();
+            }
+
+            this.tags.Clear();
+
+            foreach (Classes.Event myEvent in allEvents)
+            {
+                foreach (string tag in myEvent.tags)
+                {
+                    this.tags.Add(new Classes.Tag(tag, false));
+                }
+            }
+            this.tags = (List<Classes.Tag>)this.tags.Distinct().ToList();
+            this.tags.OrderBy(o => o.value);
+
+            
+            for (int i = 0; i < this.tags.Count; i++)
+            {
+                Classes.Tag myTag = this.tags[i];
+                
+                Border border = new Border()
+                {
+                    Background = new SolidColorBrush(Windows.UI.Colors.WhiteSmoke)
+                };
+
+                TextBlock tagText = new TextBlock()
+                {
+                    Text = myTag.value,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    FontSize = 18,
+                    Height = 32,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                border.Child = tagText;
+
+                tagText.AddHandler(TappedEvent, new TappedEventHandler((object sender, TappedRoutedEventArgs eArgs) =>
+                {
+                    myTag.active = !myTag.active;
+                    if (myTag.active)
+                    {
+                        border.Background = new SolidColorBrush(Windows.UI.Colors.Fuchsia);
+                        tagText.Foreground = new SolidColorBrush(Windows.UI.Colors.White);
+                    }
+                    else
+                    {
+                        border.Background = new SolidColorBrush(Windows.UI.Colors.WhiteSmoke);
+                        tagText.Foreground = new SolidColorBrush(Windows.UI.Colors.Black);
+                    }
+                    this.FilterEvents();
+                }), true);
+
+                TagToggleList.Children.Add(border);
+            }
         }
 
         async void scrollToBottom()
@@ -474,10 +519,41 @@ namespace Stori
 
         private void FilterEvents()
         {
-            Debug.WriteLine("entered FilterEvents()");
-            this.filteredEvents = this.allEvents;
+            //if there are no events, just go to the event creation page
+            if (allEvents == null || allEvents.Count == 0)
+            {
+                NavigateToNewEvent();
+                return;
+            }
 
-            Debug.WriteLine("FilterEvents Finished!");
+            this.allEvents = new List<Classes.Event>(allEvents).OrderBy(o => o.startDateTime).ToList();
+
+            this.allEventsByEndDate = allEvents.OrderBy(o => o.endDateTime).ToList();
+
+            this.filteredEvents = new List<Classes.Event>();
+
+            //if no tags are selected, then show all events
+            if (!tags.Any(item => item.active == true))
+            {
+                filteredEvents = allEvents;
+                populateTimeline();
+                return;
+            }
+
+            //if there are active tags, only show events containing them
+            List<Classes.Tag> activeTags = this.tags.Where(o => o.active == true).ToList();
+            List<string> stringTags = new List<string>();
+            foreach (Classes.Tag tag in activeTags)
+            {
+                stringTags.Add(tag.value);
+            }
+
+            //filtered events is all events where any tag matches the value attribute of any activeTag
+
+            this.filteredEvents = this.allEvents.Where(oneEvent => oneEvent.tags.Any(p => stringTags.Contains(p) ) ).ToList();
+
+            populateTimeline();
+
         }
 
 
@@ -499,7 +575,7 @@ namespace Stori
             this.selectedEventItem = senderRec;
 
             senderRec.Stroke = new SolidColorBrush(Windows.UI.Colors.Fuchsia);
-            EventDetailTitle.Text = myEvent.eventId.ToString() + myEvent.title;
+            EventDetailTitle.Text = myEvent.title;
             EventDetailDates.Text = myEvent.startDateTime.GetDate(myEvent.includesMonth, myEvent.includesDay, myEvent.includesHour, myEvent.includesMinute, myEvent.includesSecond) 
                 + " - " 
                 + myEvent.endDateTime.GetDate(myEvent.includesMonth, myEvent.includesDay, myEvent.includesHour, myEvent.includesMinute, myEvent.includesSecond);

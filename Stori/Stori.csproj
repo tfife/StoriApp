@@ -125,6 +125,7 @@
     <Compile Include="Classes\CustomDateTime.cs" />
     <Compile Include="Classes\Event.cs" />
     <Compile Include="Classes\EventDataAccess.cs" />
+    <Compile Include="Classes\Tag.cs" />
     <Compile Include="Classes\Timeline.cs" />
     <Compile Include="Classes\TimelineDataAccess.cs" />
     <Compile Include="Classes\TimeSystem.cs" />
