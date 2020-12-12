@@ -20,6 +20,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Button 
                         x:Name="BackButton" 
@@ -54,6 +55,15 @@
                         <Rectangle HorizontalAlignment="Stretch" Fill="Black" Height="1" Margin="0,12,0,12"/>
                     </StackPanel>
                     <StackPanel x:Name="TagToggleList" Grid.Row="3"/>
+                    <Grid Grid.Row="4" VerticalAlignment="Bottom" Margin="0,0,0,32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="ZoomOutButton" Grid.Column="0" Content="- Zoom Out" HorizontalAlignment="Center" Width="130" Click="ZoomOutButton_Click"/>
+                        <Button x:Name="ZoomInButton" Grid.Column="1" Content="+ Zoom In" HorizontalAlignment="Center" Width="130" Click="ZoomInButton_Click"/>
+
+                    </Grid>
                 </Grid>
             </ScrollViewer>
             

@@ -10,14 +10,20 @@
 
     <Grid>
         <ScrollViewer>
-            <StackPanel>
+            <StackPanel Margin="16">
                 <TextBlock FontSize="36" Text="Ok, first thing... let's give your timeline a name"/>
-                <TextBox x:Name="NewTimelineName" FocusDisengaged="NewTimelineName_FocusDisengaged" Text="New Timeline"/>
-                <TextBlock FontSize="36" Text="Will you be using standard time or making up your own system?"/>
-                <RadioButton x:Name="StandardTime" GroupName="NewTimelineType" Checked="StandardTime_Checked" Content="Standard Time"/>
+                <TextBox x:Name="NewTimelineName" FocusDisengaged="NewTimelineName_FocusDisengaged" Text="New Timeline" Width="500" HorizontalAlignment="Left" Margin="0,16,0,0"/>
+                <TextBlock FontSize="36" Text="Will you be using standard time or making up your own system?" Margin="0,16,0,0"/>
+                <RadioButton x:Name="StandardTime" GroupName="NewTimelineType" Checked="StandardTime_Checked" Content="Standard Time" Margin="0,16,0,0"/>
                 <RadioButton x:Name="CustomTime" GroupName="NewTimelineType" Checked="CustomTime_Checked" Content="Custom Time"/>
-                <Button x:Name="CancelButton" Click="CancelButton_Click" Content="Cancel"/>
-                <Button x:Name="NextButton" Click="NextButton_Click"  Content="Next"/>
+                <Grid Margin="0,36,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="CancelButton" Click="CancelButton_Click" Content="Cancel" Grid.Column="0" Width="300" Height="42" HorizontalAlignment="Center"/>
+                    <Button x:Name="NextButton" Click="NextButton_Click"  Content="Next" Grid.Column="1" Width="300" Height="42" HorizontalAlignment="Center" Background="Orange" Foreground="White"/>
+                </Grid>
                 
             </StackPanel>
         </ScrollViewer>

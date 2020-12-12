@@ -44,9 +44,11 @@ namespace Stori
         {
             //add label and rows for day names
             DayNameLabel.Text = this.timeSystem.eoDay;
-            this.AddRowToDays();
-            this.AddRowToDays();
-            AddDayRowsButton.Content = "Add another " + this.timeSystem.eoDay;
+            for (int i = 0; i < 7; i++)
+            {
+                this.AddRowToDays();
+            }
+            AddDayRowsButton.Content = "+ Add " + this.timeSystem.eoDay;
 
             //add label and rows for month names
             MonthNameLabel.Text = this.timeSystem.eoMonth;
@@ -91,16 +93,21 @@ namespace Stori
                 Orientation = Orientation.Horizontal
             };
             TextBlock text = new TextBlock() {
-                Text = num.ToString() + ". name: "
+                Text = num.ToString("00") + ". name: "
             };
             TextBox textBox = new TextBox()
             {
-                Text = defaultName
+                Text = defaultName,
+                MinWidth = 300,
+                Margin = new Thickness(16,0,0,0)
             };
             Button deleteButton = new Button()
             {
-                Content = "Delete"
-            };
+                Content = "X",
+                Margin = new Thickness(16, 0, 0, 0),
+                Background = new SolidColorBrush(Windows.UI.Colors.Red),
+                Foreground = new SolidColorBrush(Windows.UI.Colors.White)
+        };
             deleteButton.AddHandler(UIElement.TappedEvent, new TappedEventHandler(RemoveDayRow_Click), true);
             row.Children.Add(text);
             row.Children.Add(textBox);
@@ -161,11 +168,13 @@ namespace Stori
             };
             TextBlock text = new TextBlock()
             {
-                Text = num.ToString() + ". name: "
+                Text = num.ToString("00") + ". name: "
             };
             TextBox textBox = new TextBox()
             {
-                Text = defaultName
+                Text = defaultName,
+                MinWidth = 300,
+                Margin = new Thickness(16, 0, 0, 0)
             };
             row.Children.Add(text);
             row.Children.Add(textBox);

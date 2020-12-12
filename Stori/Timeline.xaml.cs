@@ -637,5 +637,21 @@ namespace Stori
                 rootFrame.GoBack();
             }
         }
+
+        private void ZoomInButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.timeline.ZoomIn())
+            {
+                populateTimeline();
+            }
+        }
+
+        private void ZoomOutButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.timeline.ZoomOut())
+            {
+                populateTimeline();
+            }
+        }
     }
 }

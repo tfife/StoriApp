@@ -9,70 +9,73 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-        <StackPanel>
-            <TextBlock FontSize="36" x:Name="PageHeaderText"/>
-            <TextBlock FontSize="24" x:Name="StartDateLabel" Text="Event Start Date: "/>
-            <StackPanel Orientation="Horizontal" x:Name="StartDateControls">
-                <TextBlock x:Name="StartYearLabel"/>
-                <muxc:NumberBox x:Name="StartYearNumber" ValueChanged="StartYearNumber_ValueChanged"/>
-                <TextBlock x:Name="StartMonthLabel" Visibility="Collapsed"/>
-                <muxc:NumberBox x:Name="StartMonthNumber" Minimum="1" Visibility="Collapsed" ValueChanged="StartMonthNumber_ValueChanged"/>
-                <TextBlock x:Name="StartDayLabel" Visibility="Collapsed"/>
-                <muxc:NumberBox x:Name="StartDayNumber" Minimum="1" Visibility="Collapsed" />
-                <TextBlock x:Name="AddMonthOrDayTextButton" Foreground="Orange" Tapped="AddMonthOrDayTextButton_Tapped" Text="+ Add"/>
-            </StackPanel>
-            
-            <StackPanel Orientation="Horizontal" x:Name="StartDateControls2">
-                <TextBlock x:Name="StartHourLabel" Visibility="Collapsed"/>
-                <muxc:NumberBox x:Name="StartHourNumber" Minimum="0" Visibility="Collapsed" />
-                <TextBlock x:Name="StartMinuteLabel" Visibility="Collapsed"/>
-                <muxc:NumberBox x:Name="StartMinuteNumber" Minimum="0" Visibility="Collapsed" />
-                <TextBlock x:Name="StartSecondLabel" Visibility="Collapsed"/>
-                <muxc:NumberBox x:Name="StartSecondNumber" Minimum="0" Visibility="Collapsed"/>
-                <TextBlock x:Name="AddTimeUnitTextButton" Visibility="Collapsed" Foreground="Orange" Tapped="AddTimeUnitTextButton_Tapped"/>
-            </StackPanel>
-            
-            <TextBlock FontSize="24" x:Name="EndDateLabel" Text="Event End Date: "/>
-            <StackPanel Orientation="Horizontal" x:Name="EndDateControls">
-                <TextBlock x:Name="EndYearLabel"/>
-                <muxc:NumberBox x:Name="EndYearNumber" ValueChanged="EndYearNumber_ValueChanged"/>
-                <TextBlock x:Name="EndMonthLabel" Visibility="Collapsed"/>
-                <muxc:NumberBox x:Name="EndMonthNumber" Minimum="0" Visibility="Collapsed" ValueChanged="EndMonthNumber_ValueChanged"/>
-                <TextBlock x:Name="EndDayLabel" Visibility="Collapsed"/>
-                <muxc:NumberBox x:Name="EndDayNumber" Minimum="0" Visibility="Collapsed"/>
-            </StackPanel>
-            
-            <StackPanel Orientation="Horizontal" x:Name="EndDateControls2">
-                <TextBlock x:Name="EndHourLabel" Visibility="Collapsed"/>
-                <muxc:NumberBox x:Name="EndHourNumber" Minimum="0" Visibility="Collapsed"/>
-                <TextBlock x:Name="EndMinuteLabel" Visibility="Collapsed"/>
-                <muxc:NumberBox x:Name="EndMinuteNumber" Minimum="0" Visibility="Collapsed"/>
-                <TextBlock x:Name="EndSecondLabel" Visibility="Collapsed"/>
-                <muxc:NumberBox x:Name="EndSecondNumber" Minimum="0" Visibility="Collapsed"/>
-            </StackPanel>
-            <TextBlock FontSize="24" x:Name="EventTitleLabel" Text="Event Title: "/>
-            <TextBox x:Name="EventTitleTextBox" />
-            <TextBlock FontSize="24" x:Name="DescriptionLabel" Text="Event Description: "/>
-            <TextBox x:Name="EventDescriptionTextBox"/>
-            <TextBlock FontSize="24" x:Name="TagsLabel" Text="Event Tags:"/>
+    <ScrollViewer>
+        <Grid Margin="16,0,16,0">
+            <StackPanel>
+                <TextBlock FontSize="36" x:Name="PageHeaderText"/>
+                <TextBlock FontSize="24" x:Name="StartDateLabel" Text="Event Start Date: " Margin="0,16,0,0"/>
+                <StackPanel Orientation="Horizontal" x:Name="StartDateControls" Margin="0,8,0,0">
+                    <TextBlock x:Name="StartYearLabel" Margin="16,8,0,0"/>
+                    <muxc:NumberBox x:Name="StartYearNumber" Margin="4,0,0,0" ValueChanged="StartYearNumber_ValueChanged"/>
+                    <TextBlock x:Name="StartMonthLabel" Margin="16,8,0,0" Visibility="Collapsed"/>
+                    <muxc:NumberBox x:Name="StartMonthNumber" Margin="4,0,0,0" Minimum="1" Visibility="Collapsed" ValueChanged="StartMonthNumber_ValueChanged"/>
+                    <TextBlock x:Name="StartDayLabel" Margin="16,8,0,0" Visibility="Collapsed"/>
+                    <muxc:NumberBox x:Name="StartDayNumber" Margin="4,0,0,0" Minimum="1" Visibility="Collapsed" />
+                    <TextBlock x:Name="AddMonthOrDayTextButton" Foreground="Orange" Tapped="AddMonthOrDayTextButton_Tapped" Text="+ Add"/>
+                </StackPanel>
 
-            <StackPanel x:Name="TagsStackPanel" />
-            
-            <StackPanel Orientation="Horizontal">
-                <TextBox x:Name="NewTagNameTextBox"/>
-                <Button x:Name="AddTagButton" Content="Add" Click="AddTagButton_Click"/>
+                <StackPanel Orientation="Horizontal" x:Name="StartDateControls2" Margin="0,8,0,0">
+                    <TextBlock x:Name="StartHourLabel" Margin="16,8,0,0" Visibility="Collapsed"/>
+                    <muxc:NumberBox x:Name="StartHourNumber" Margin="4,0,0,0" Minimum="0" Visibility="Collapsed" />
+                    <TextBlock x:Name="StartMinuteLabel" Margin="16,8,0,0" Visibility="Collapsed"/>
+                    <muxc:NumberBox x:Name="StartMinuteNumber" Margin="4,0,0,0" Minimum="0" Visibility="Collapsed" />
+                    <TextBlock x:Name="StartSecondLabel" Margin="16,8,0,0" Visibility="Collapsed"/>
+                    <muxc:NumberBox x:Name="StartSecondNumber" Margin="4,0,0,0" Minimum="0" Visibility="Collapsed"/>
+                    <TextBlock x:Name="AddTimeUnitTextButton" Visibility="Collapsed" Foreground="Orange" Tapped="AddTimeUnitTextButton_Tapped"/>
+                </StackPanel>
+
+                <TextBlock FontSize="24" x:Name="EndDateLabel" Text="Event End Date: " Margin="0,16,0,0"/>
+                <StackPanel Orientation="Horizontal" x:Name="EndDateControls" Margin="0,8,0,0">
+                    <TextBlock x:Name="EndYearLabel" Margin="16,8,0,0"/>
+                    <muxc:NumberBox x:Name="EndYearNumber" Margin="4,0,0,0" ValueChanged="EndYearNumber_ValueChanged"/>
+                    <TextBlock x:Name="EndMonthLabel" Margin="16,8,0,0" Visibility="Collapsed"/>
+                    <muxc:NumberBox x:Name="EndMonthNumber" Margin="4,0,0,0" Minimum="0" Visibility="Collapsed" ValueChanged="EndMonthNumber_ValueChanged"/>
+                    <TextBlock x:Name="EndDayLabel" Margin="16,0,8,0" Visibility="Collapsed"/>
+                    <muxc:NumberBox x:Name="EndDayNumber" Margin="4,0,0,0" Minimum="0" Visibility="Collapsed"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" x:Name="EndDateControls2" Margin="0,8,0,0">
+                    <TextBlock x:Name="EndHourLabel" Margin="16,8,0,0" Visibility="Collapsed"/>
+                    <muxc:NumberBox x:Name="EndHourNumber" Margin="4,0,0,0" Minimum="0" Visibility="Collapsed"/>
+                    <TextBlock x:Name="EndMinuteLabel" Margin="16,8,0,0" Visibility="Collapsed"/>
+                    <muxc:NumberBox x:Name="EndMinuteNumber" Margin="4,0,0,0" Minimum="0" Visibility="Collapsed"/>
+                    <TextBlock x:Name="EndSecondLabel" Margin="16,8,0,0" Visibility="Collapsed"/>
+                    <muxc:NumberBox x:Name="EndSecondNumber" Margin="4,0,0,0" Minimum="0" Visibility="Collapsed"/>
+                </StackPanel>
+                <TextBlock FontSize="24" x:Name="EventTitleLabel" Text="Event Title: " Margin="0,16,0,0"/>
+                <TextBox x:Name="EventTitleTextBox"  Width="500" HorizontalAlignment="Left"/>
+                <TextBlock FontSize="24" x:Name="DescriptionLabel" Text="Event Description: " Margin="0,16,0,0"/>
+                <TextBox x:Name="EventDescriptionTextBox" Width="500" HorizontalAlignment="Left" TextWrapping="Wrap"/>
+                <TextBlock FontSize="24" x:Name="TagsLabel" Text="Event Tags:" Margin="0,16,0,0"/>
+
+                <StackPanel x:Name="TagsStackPanel" />
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="NewTagNameTextBox" MinWidth="200"/>
+                    <Button x:Name="AddTagButton" Content="+ Add" Click="AddTagButton_Click" Background="Orange" Foreground="White" Margin="16,0,0,0"/>
+                </StackPanel>
+                <TextBlock x:Name="DateOrderErrorText" Foreground="Red" Text="End Date must be later than Start Date" Visibility="Collapsed"/>
+                <Grid Margin="0,36,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" x:Name="CancelButton" Click="CancelButton_Click" HorizontalAlignment="Center" Content="Cancel" Width="300" Height="42"/>
+                    <Button Grid.Column="1" x:Name="SubmitButton" Click="SubmitButton_Click" HorizontalAlignment="Center" Content="Save" Width="300" Height="42" Background="Orange" Foreground="White"/>
+                </Grid>
             </StackPanel>
-            <TextBlock x:Name="DateOrderErrorText" Foreground="Red" Text="End Date must be later than Start Date" Visibility="Collapsed"/>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" x:Name="CancelButton" Click="CancelButton_Click" HorizontalAlignment="Center" Content="Cancel"/>
-                <Button Grid.Column="1" x:Name="SubmitButton" Click="SubmitButton_Click" HorizontalAlignment="Center" Content="Save"/>
-            </Grid>
-            <Button x:Name="DeleteEventButton" Background="Red" Foreground="White" Content="Permanently Delete Event" Click="DeleteEventButton_Click" HorizontalAlignment="Center"/>
-        </StackPanel>
-    </Grid>
+            <Button x:Name="DeleteEventButton" Background="Red" Foreground="White" Content="Permanently Delete Event" Click="DeleteEventButton_Click" Width="300" Height="42" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,76"/>
+        </Grid>
+    </ScrollViewer>
+    
 </Page>

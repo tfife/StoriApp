@@ -9,61 +9,72 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <Grid Margin="16,0,0,0">
         <ScrollViewer>
             <StackPanel>
                 <TextBlock FontSize="36" Text="Ok, let's add some more information about"/>
                 <TextBlock FontSize="24" FontWeight="Bold" x:Name="TimelineName"/>
 
                 <TextBlock FontSize="36" Text="Time of Day"/>
-                <TextBlock FontSize="24" Text="The smallest significant unit of time is a(n)"/>
-                <StackPanel Orientation="Horizontal">
-                    <TextBox x:Name="NameSecond" Width="300" Text="second"/>
-                    <TextBlock FontSize="24" Text=", of which there are "/>
-                    <muxc:NumberBox x:Name="NumSeconds" Value="60" Minimum="2"/>
-                    <TextBlock FontSize="24" Text=" in a(n)"/>
-                </StackPanel>
+                <StackPanel x:Name="TimeSection" Margin="32,16,0,0" Spacing="8">
+                    <TextBlock FontSize="24" Text="The smallest significant unit of time is a(n)"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox x:Name="NameSecond" Width="300" Text="second"/>
+                        <TextBlock FontSize="24" Text=", of which there are "/>
+                        <muxc:NumberBox x:Name="NumSeconds" Value="60" Minimum="2"/>
+                        <TextBlock FontSize="24" Text=" in a(n)"/>
+                    </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBox x:Name="NameMinute" Width="300" Text="minute"/>
-                    <TextBlock FontSize="24" Text=", of which there are "/>
-                    <muxc:NumberBox x:Name="NumMinutes" Value="60" Minimum="2"/>
-                    <TextBlock FontSize="24" Text=" in a(n)"/>
-                </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox x:Name="NameMinute" Width="300" Text="minute"/>
+                        <TextBlock FontSize="24" Text=", of which there are "/>
+                        <muxc:NumberBox x:Name="NumMinutes" Value="60" Minimum="2"/>
+                        <TextBlock FontSize="24" Text=" in a(n)"/>
+                    </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBox x:Name="NameHour" Width="300" Text="hour"/>
-                    <TextBlock FontSize="24" Text=", of which there are "/>
-                    <muxc:NumberBox x:Name="NumHours" Value="24" Minimum="2"/>
-                    <TextBlock FontSize="24" Text=" in a(n)"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox x:Name="NameHour" Width="300" Text="hour"/>
+                        <TextBlock FontSize="24" Text=", of which there are "/>
+                        <muxc:NumberBox x:Name="NumHours" Value="24" Minimum="2"/>
+                        <TextBlock FontSize="24" Text=" in a(n)"/>
+                    </StackPanel>
                 </StackPanel>
+                
                 <TextBlock FontSize="36" Text="Day"/>
 
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" x:Name="DaySection" Margin="32,16,0,0">
                     <TextBox x:Name="NameDay" Width="300" Text="day"/>
                     <TextBlock FontSize="24" Text=", of which there are "/>
                     <muxc:NumberBox x:Name="NumDays" IsEnabled="False" Minimum="2"/>
                     <CheckBox x:Name="VariableDaysCheckBox" IsChecked="True" Content="variable" Click="CheckBox_Click"/>
                     <TextBlock FontSize="24" Text=" in a(n)"/>
                 </StackPanel>
-                <TextBlock FontSize="36" Text="Groups of Days"/>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBox x:Name="NameMonth" Width="300" Text="month"/>
-                    <TextBlock FontSize="24" Text=", of which there are "/>
-                    <muxc:NumberBox x:Name="NumMonths" Value="12" Minimum="2"/>
-                    <TextBlock FontSize="24" Text=" in a(n)"/>
-                </StackPanel>
+                <TextBlock FontSize="36" Text="Groups of Days" Margin="0,16,0,0"/>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBox x:Name="NameYear" Width="300" Text="year"/>
-                    <TextBlock FontSize="24" Text="."/>
-                </StackPanel>
+                <StackPanel x:Name="GroupSection" Margin="32,16,0,0" Spacing="8">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox x:Name="NameMonth" Width="300" Text="month"/>
+                        <TextBlock FontSize="24" Text=", of which there are "/>
+                        <muxc:NumberBox x:Name="NumMonths" Value="12" Minimum="2"/>
+                        <TextBlock FontSize="24" Text=" in a(n)"/>
+                    </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <Button x:Name="BackButton" Click="BackButton_Click" Content="Back"/>
-                    <Button x:Name="NextButton" Click="NextButton_Click"  Content="Next"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox x:Name="NameYear" Width="300" Text="year"/>
+                        <TextBlock FontSize="24" Text="."/>
+                    </StackPanel>
                 </StackPanel>
+                
+
+                <Grid Margin="0,36,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="BackButton" Click="BackButton_Click" Content="Back" Grid.Column="0" Width="300" Height="42" HorizontalAlignment="Center"/>
+                    <Button x:Name="NextButton" Click="NextButton_Click"  Content="Next" Grid.Column="1" Width="300" Height="42" HorizontalAlignment="Center" Background="Orange" Foreground="White"/>
+                </Grid>
 
             </StackPanel>
         </ScrollViewer>

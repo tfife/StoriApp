@@ -69,6 +69,9 @@ namespace Stori
 
             if (VariableDaysCheckBox.IsChecked == false)
             {
+                timeSystem.variableLengthMonths = false;
+
+                //add all the listed days
                 List<int> daysInMonths = new List<int>();
                 
                 for (int i = 0; i < (int)NumMonths.Value; i++)

@@ -12,6 +12,7 @@ namespace Stori.Classes
         public int monInYear, hourInDay, minInHour, secInMin, timelineId;
         public bool customTime = true;
         public bool leapYearEnabled = false;
+        public bool variableLengthMonths = true;
         public List<string> monNames, dayNames;
         public List<int> daysInMonths;
 
@@ -29,6 +30,7 @@ namespace Stori.Classes
             int secInMin,
             bool customTime = true,
             bool leapYearEnabled = false,
+            bool variableLengthMonths = true,
             List<string> monNames = null,
             List<string> dayNames = null,
             List<int> daysInMonths = null, 
@@ -46,6 +48,7 @@ namespace Stori.Classes
             this.secInMin = secInMin;
             this.customTime = customTime;
             this.leapYearEnabled = leapYearEnabled;
+            this.variableLengthMonths = variableLengthMonths;
             this.monNames = monNames;
             this.dayNames = dayNames;
             this.daysInMonths = daysInMonths;

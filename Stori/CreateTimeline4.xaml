@@ -13,15 +13,19 @@
         <ScrollViewer>
             
             <StackPanel>
-                <TextBlock FontSize="36" Text="You have some variable times here\n"/>
+                <TextBlock FontSize="36" Text="You have some variable times here"/>
                 <TextBlock FontSize="36" x:Name="MonthNameLabel"/>
-                <TextBlock x:Name="TestTextBlock" Text="test: "/>
                 <StackPanel x:Name="MonthRowsStackPanel"/>
-                
-                <StackPanel Orientation="Horizontal">
-                    <Button x:Name="BackButton" Click="BackButton_Click" Content="Back"/>
-                    <Button x:Name="NextButton" Click="NextButton_Click"  Content="Next"/>
-                </StackPanel>
+
+
+                <Grid Margin="0,36,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="BackButton" Click="BackButton_Click" Content="Back" Grid.Column="0" Width="300" Height="42" HorizontalAlignment="Center"/>
+                    <Button x:Name="NextButton" Click="NextButton_Click"  Content="Next (Add Event)" Grid.Column="1" Width="300" Height="42" HorizontalAlignment="Center" Background="Orange" Foreground="White"/>
+                </Grid>
             </StackPanel>
         </ScrollViewer>
 

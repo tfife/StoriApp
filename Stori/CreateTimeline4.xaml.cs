@@ -36,6 +36,11 @@ namespace Stori
             if (e.Parameter is Classes.TimeSystem)
             {
                 this.timeSystem = (Classes.TimeSystem)e.Parameter;
+                if (!this.timeSystem.variableLengthMonths)
+                {
+                    SaveAndShowTimeline();
+                    return;
+                }
                 populateRows();
             }
             base.OnNavigatedTo(e);
@@ -96,16 +101,18 @@ namespace Stori
                 };
                 TextBlock text1 = new TextBlock()
                 {
-                    Text = i.ToString() + ". "
+                    Text = i.ToString("00") + ". "
                 };
                 muxc.NumberBox numberBox = new muxc.NumberBox()
                 {
                     Value = num,
-                    Minimum = 1
+                    Minimum = 1,
+                    Margin = new Thickness(16, 0, 0, 0)
                 };
                 TextBlock text2 = new TextBlock()
                 {
-                    Text = this.timeSystem.eoDay + "(s) in " + this.timeSystem.monNames[i - 1].ToString()
+                    Text = this.timeSystem.eoDay + "(s) in " + this.timeSystem.monNames[i - 1].ToString(),
+                    Margin = new Thickness(16, 0, 0, 0)
                 };
                 row.Children.Add(text1);
                 row.Children.Add(numberBox);
@@ -116,7 +123,8 @@ namespace Stori
                     CheckBox useLeapYearCheckBox = new CheckBox()
                     {
                         IsChecked = true,
-                        Content = "use leap year (follows standard rules)"
+                        Content = "use leap year (follows standard rules)",
+                        Margin = new Thickness(16, 0, 0, 0)
                     };
 
                     useLeapYearCheckBox.AddHandler(UIElement.TappedEvent, new TappedEventHandler(UseLeapYearCheckBox_Click), true);

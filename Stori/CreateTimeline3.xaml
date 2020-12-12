@@ -8,19 +8,24 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <Grid Margin="16,0,0,0">
         <ScrollViewer>
             <StackPanel>
                 <TextBlock FontSize="36" Text="Time to give names and suffixes to some of your units\n"/>
                 <TextBlock FontSize="36" x:Name="DayNameLabel"/>
-                <StackPanel x:Name="DayRowsStackPanel"/>
-                <Button x:Name="AddDayRowsButton" Click="AddDayRowsButton_Click"/>
+                <StackPanel x:Name="DayRowsStackPanel" Margin="32,16,0,0" Spacing="8"/>
+                <Button x:Name="AddDayRowsButton" Click="AddDayRowsButton_Click" Margin="32,16,0,0" Background="Orange" Foreground="White"/>
                 <TextBlock FontSize="36" x:Name="MonthNameLabel"/>
-                <StackPanel x:Name="MonthRowsStackPanel"/>
-                <StackPanel Orientation="Horizontal">
-                    <Button x:Name="BackButton" Click="BackButton_Click" Content="Back"/>
-                    <Button x:Name="NextButton" Click="NextButton_Click"  Content="Next"/>
-                </StackPanel>
+                <StackPanel x:Name="MonthRowsStackPanel" Margin="32,16,0,0" Spacing="8"/>
+
+                <Grid Margin="0,36,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="BackButton" Click="BackButton_Click" Content="Back" Grid.Column="0" Width="300" Height="42" HorizontalAlignment="Center"/>
+                    <Button x:Name="NextButton" Click="NextButton_Click"  Content="Next" Grid.Column="1" Width="300" Height="42" HorizontalAlignment="Center" Background="Orange" Foreground="White"/>
+                </Grid>
             </StackPanel>
         </ScrollViewer>
 

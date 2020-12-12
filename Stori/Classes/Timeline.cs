@@ -152,17 +152,41 @@ namespace Stori.Classes
                 case ZoomLevel.MinuteSecond:
                     return false;
                 case ZoomLevel.HourMinute:
-                    this.SetZoomLevel(ZoomLevel.MinuteSecond);
-                    break;
+                    return false;
+                    //this.SetZoomLevel(ZoomLevel.MinuteSecond);
+                    //break;
                 case ZoomLevel.DayHour:
-                    this.SetZoomLevel(ZoomLevel.HourMinute);
-                    break;
+                    return false;
+                    //this.SetZoomLevel(ZoomLevel.HourMinute);
+                    //break;
                 case ZoomLevel.MonthDay:
                     this.SetZoomLevel(ZoomLevel.DayHour);
                     break;
                 default:
                     this.SetZoomLevel(ZoomLevel.MonthDay);
                     break;
+            }
+            return true;
+        }
+
+        public bool ZoomOut()
+        {
+            switch (this.currentZoomLevel)
+            {
+                case ZoomLevel.MinuteSecond:
+                    this.SetZoomLevel(ZoomLevel.HourMinute);
+                    break;
+                case ZoomLevel.HourMinute:
+                    this.SetZoomLevel(ZoomLevel.DayHour);
+                    break;
+                case ZoomLevel.DayHour:
+                    this.SetZoomLevel(ZoomLevel.MonthDay);
+                    break;
+                case ZoomLevel.MonthDay:
+                    this.SetZoomLevel(ZoomLevel.YearMonth);
+                    break;
+                default:
+                    return false;
             }
             return true;
         }

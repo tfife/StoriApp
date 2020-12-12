@@ -50,7 +50,6 @@ namespace Stori
             if (e.Parameter is Classes.TimeSystem)
             {
                 this.editMode = false;
-                PageHeaderText.Text = ((Classes.TimeSystem)e.Parameter).getDaysInMonth(1, 2020).ToString();
 
                 this.timeSystem = (Classes.TimeSystem)e.Parameter;
                 this.myEvent = new Classes.Event(new Classes.Timeline(timeSystem));
@@ -227,7 +226,10 @@ namespace Stori
             if (this.timeSystem.isLeapYear((int)StartYearNumber.Value) && (int)StartMonthNumber.Value == 2)
             {
                 StartDayNumber.Maximum = timeSystem.getDaysInMonth((int)StartMonthNumber.Value, (int)StartYearNumber.Value);
-
+            }
+            if (!(this.EndYearNumber.Value >= StartYearNumber.Value))
+            {
+                this.EndYearNumber.Value = StartYearNumber.Value;
             }
         }
 

@@ -69,6 +69,7 @@ namespace Stori
             }
             else
             {
+                this.initializeDefaultTimeSystem();
                 Classes.TimelineDataAccess dataAccess = new Classes.TimelineDataAccess();
 
                 await dataAccess.SaveNewTimeline(timeSystem);
@@ -100,6 +101,7 @@ namespace Stori
                 24,
                 60,
                 60,
+                true,
                 true,
                 true,
                 new List<string>() { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" },
