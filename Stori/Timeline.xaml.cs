@@ -44,6 +44,9 @@ namespace Stori
         List<string> tags;
         List<string> activeTags;
 
+        Classes.Event selectedEvent;
+        Rectangle selectedEventItem;
+
         Classes.EventDataAccess dataAccess = new Classes.EventDataAccess();
 
         public Timeline()
@@ -209,6 +212,12 @@ namespace Stori
                     RadiusX = 10,
                     RadiusY = 10
                 };
+
+                eventItem.AddHandler(UIElement.TappedEvent, new TappedEventHandler((object sender, TappedRoutedEventArgs e) =>
+                {
+                    this.EventClicked(currentEvent, (Rectangle)sender);
+                }), true);
+
                 Canvas.SetLeft(eventItem, offset - eventPadding);
 
                 int eventEnd = offset - eventPadding + width;
@@ -255,7 +264,7 @@ namespace Stori
 
                 //add the top tick
                 var topTick = new Line();
-                topTick.Stroke = new SolidColorBrush(Windows.UI.Colors.Black);
+                topTick.Stroke = new SolidColorBrush(Windows.UI.Colors.Green);
                 topTick.StrokeThickness = lineWidth;
 
                 topTick.X1 = 0;
@@ -393,9 +402,9 @@ namespace Stori
             timelineTopPadding += 50; //room for the labels
 
             timelineTopPadding += (eventHeight + eventPadding) * layerOffsets.Count();
-            if (timelineTopPadding < 1000)
+            if (timelineTopPadding < 300)
             {
-                timelineTopPadding = 1000;
+                timelineTopPadding = 300;
             }
 
             //set the canvas width to fit all ticks and add the line
@@ -481,6 +490,76 @@ namespace Stori
         {
             //TimelineLabelTextBlock.Text  = this.timeline.timeSystem.GetDaysInMonthText();
             this.Frame.Navigate(typeof(AddOrEditEvent), this.timeline.timeSystem);
+        }
+
+        private void EventClicked(Classes.Event myEvent, Rectangle senderRec)
+        {
+            ClearSelectedEvent();
+            this.selectedEvent = myEvent;
+            this.selectedEventItem = senderRec;
+
+            senderRec.Stroke = new SolidColorBrush(Windows.UI.Colors.Fuchsia);
+            EventDetailTitle.Text = myEvent.eventId.ToString() + myEvent.title;
+            EventDetailDates.Text = myEvent.startDateTime.GetDate(myEvent.includesMonth, myEvent.includesDay, myEvent.includesHour, myEvent.includesMinute, myEvent.includesSecond) 
+                + " - " 
+                + myEvent.endDateTime.GetDate(myEvent.includesMonth, myEvent.includesDay, myEvent.includesHour, myEvent.includesMinute, myEvent.includesSecond);
+            EventDetailDescription.Text = myEvent.description;
+
+            string tags = "";
+            if (myEvent.tags != null && myEvent.tags.Count > 0)
+            {
+                tags += "Tags: ";
+                for (int i = 0; i < myEvent.tags.Count - 1; i++)
+                {
+                    tags += myEvent.tags[i] + ", ";
+                }
+                tags += myEvent.tags[myEvent.tags.Count - 1];
+            }
+                EventDetailTags.Text = tags;
+
+            EventDetailsStackPanel.Visibility = Visibility.Visible;
+
+        }
+
+        private void ClearSelectedEvent()
+        {
+            if (selectedEventItem != null)
+            {
+                this.selectedEventItem.Stroke = new SolidColorBrush(Windows.UI.Colors.Black);
+            }
+            
+            this.selectedEventItem = null;
+            this.selectedEvent = null;
+        }
+
+        private void CloseEventDetailsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (selectedEventItem is null)
+            {
+                return;
+            }
+            selectedEventItem.Stroke = new SolidColorBrush(Windows.UI.Colors.Black);
+            EventDetailsStackPanel.Visibility = Visibility.Collapsed;
+            ClearSelectedEvent();
+        }
+
+        private void EditEventButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (selectedEvent is null)
+            {
+                return;
+            }
+            Debug.WriteLine("event: " + this.selectedEvent.title);
+            this.Frame.Navigate(typeof(AddOrEditEvent), this.selectedEvent);
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+            if (rootFrame.CanGoBack)
+            {
+                rootFrame.GoBack();
+            }
         }
     }
 }

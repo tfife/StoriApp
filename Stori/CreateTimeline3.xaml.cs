@@ -108,6 +108,7 @@ namespace Stori
 
             DayRowsStackPanel.Children.Add(row);
         }
+
         private void AddRowToMonths(int num)
         {
             string defaultName;

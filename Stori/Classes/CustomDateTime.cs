@@ -30,9 +30,36 @@ namespace Stori.Classes
             this.second = second;
             this.dayNameIndex = dayNameIndex;
         }
-        public String GetDate()
+        public String GetDate(bool includesMonth, bool includesDay, bool includesHour, bool includesMinute, bool includesSecond)
         {
-            return "datestring";
+            string date = "";
+            if (includesDay)
+            {
+                date += this.day.ToString() + " ";
+            }
+            if (includesMonth)
+            {
+                date += this.GetMonthName() + " ";
+            }
+            date += this.year.ToString("0000") + " ";
+
+            if (includesHour)
+            {
+                date += this.hour.ToString() + ":";
+                if (includesMinute)
+                {
+                    date += this.minute.ToString("00");
+                }
+                else
+                {
+                    date += "00";
+                }
+                if (includesSecond)
+                {
+                    date += ":" + this.second.ToString("00");
+                }
+            }
+            return date;
         }
 
         public CustomDateTime GetDateTime()

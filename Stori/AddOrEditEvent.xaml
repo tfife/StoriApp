@@ -56,16 +56,12 @@
             <TextBlock FontSize="24" x:Name="DescriptionLabel" Text="Event Description: "/>
             <TextBox x:Name="EventDescriptionTextBox"/>
             <TextBlock FontSize="24" x:Name="TagsLabel" Text="Event Tags:"/>
-            <GridView>
-                <GridView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsWrapGrid x:Name="TagList" Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </GridView.ItemsPanel>
-            </GridView>
+
+            <StackPanel x:Name="TagsStackPanel" />
+            
             <StackPanel Orientation="Horizontal">
                 <TextBox x:Name="NewTagNameTextBox"/>
-                <Button x:Name="AddTagButton" Content="Add"/>
+                <Button x:Name="AddTagButton" Content="Add" Click="AddTagButton_Click"/>
             </StackPanel>
             <TextBlock x:Name="DateOrderErrorText" Foreground="Red" Text="End Date must be later than Start Date" Visibility="Collapsed"/>
             <Grid>
@@ -76,6 +72,7 @@
                 <Button Grid.Column="0" x:Name="CancelButton" Click="CancelButton_Click" HorizontalAlignment="Center" Content="Cancel"/>
                 <Button Grid.Column="1" x:Name="SubmitButton" Click="SubmitButton_Click" HorizontalAlignment="Center" Content="Save"/>
             </Grid>
+            <Button x:Name="DeleteEventButton" Background="Red" Foreground="White" Content="Permanently Delete Event" Click="DeleteEventButton_Click" HorizontalAlignment="Center"/>
         </StackPanel>
     </Grid>
 </Page>

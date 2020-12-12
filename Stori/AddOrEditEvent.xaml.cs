@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -55,10 +56,6 @@ namespace Stori
                 this.myEvent = new Classes.Event(new Classes.Timeline(timeSystem));
                 this.originalTimeline = myEvent.timeline;
                 this.PopulateForNewEvent();
-            }
-            else
-            {
-                PageHeaderText.Text = "Error?";
             }
             base.OnNavigatedTo(e);
         }
@@ -156,7 +153,11 @@ namespace Stori
                 deepestUnit = Unit.second;
             }
 
+            EventTitleTextBox.Text = myEvent.title;
+            EventDescriptionTextBox.Text = myEvent.description;
+
             SubmitButton.Content = "Save!";
+            DeleteEventButton.Visibility = Visibility.Visible;
 
             this.handleTextButtons();
             this.assignFieldLimits();
@@ -183,6 +184,8 @@ namespace Stori
             deepestUnit = Unit.year;
 
             SubmitButton.Content = "Create!";
+            DeleteEventButton.Visibility = Visibility.Collapsed;
+
             this.handleTextButtons();
             this.assignFieldLimits();
         }
@@ -431,6 +434,32 @@ namespace Stori
                 (int)EndMinuteNumber.Value,
                 (int)EndSecondNumber.Value);
 
+            if (!myEvent.includesMonth)
+            {
+                startDate.month = 1;
+                endDate.month = 1;
+            }
+            if (!myEvent.includesDay)
+            {
+                startDate.day = 1;
+                endDate.day = 1;
+            }
+            if (!myEvent.includesHour)
+            {
+                startDate.hour = 0;
+                endDate.hour = 0;
+            }
+            if (!myEvent.includesMinute)
+            {
+                startDate.minute = 0;
+                endDate.minute = 0;
+            }
+            if (!myEvent.includesSecond)
+            {
+                startDate.second = 0;
+                endDate.second = 0;
+            }
+
             //check that end comes after start
             if (endDate <= startDate)
             {
@@ -443,6 +472,15 @@ namespace Stori
 
             myEvent.title = EventTitleTextBox.Text;
             myEvent.description = EventDescriptionTextBox.Text;
+
+            List<string> tags = new List<string>();
+
+            foreach (StackPanel panel in TagsStackPanel.Children)
+            {
+                tags.Add(((TextBlock)panel.Children[0]).Text);
+            }
+
+            myEvent.tags = tags;
 
             if (!editMode)
             {
@@ -482,7 +520,52 @@ namespace Stori
 
         private async void SaveAndShowTimeilne()
         {
-            await dataAccess.SaveNewEvent(myEvent);
+            if (editMode)
+            {
+                await dataAccess.UpdateEvent(myEvent);
+            }
+            else
+            {
+                await dataAccess.SaveNewEvent(myEvent);
+            }
+            this.Frame.Navigate(typeof(Timeline), timeSystem);
+            return;
+        }
+
+        private void AddTagButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(NewTagNameTextBox.Text))
+            {
+                AddTagButton.Focus(FocusState.Programmatic);
+                return;
+            }
+            StackPanel row = new StackPanel()
+            {
+                Orientation = Orientation.Horizontal
+            };
+            TextBlock textBlock = new TextBlock()
+            {
+                Text = NewTagNameTextBox.Text
+        };
+            Button removeTagButton = new Button()
+            {
+                Content = "Remove"
+            };
+
+            removeTagButton.AddHandler(UIElement.TappedEvent, new TappedEventHandler((object rtbSender, TappedRoutedEventArgs treArgs) =>
+            {
+                TagsStackPanel.Children.Remove(row);
+            }), true);
+
+            row.Children.Add(textBlock);
+            row.Children.Add(removeTagButton);
+
+            TagsStackPanel.Children.Add(row);
+        }
+
+        private async void DeleteEventButton_Click(object sender, RoutedEventArgs e)
+        {
+            await this.dataAccess.DeleteEvent(myEvent);
             this.Frame.Navigate(typeof(Timeline), timeSystem);
             return;
         }

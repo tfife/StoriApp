@@ -17,12 +17,39 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Button x:Name="NewEventButton" Grid.Row="0" Content="Create New Event" FontSize="36" Click="NewEventButton_Click"/>
-                <StackPanel Grid.Row="1">
-                    <TextBlock EventDetailTitle FontSize="32" FontWeight="SemiBold"/>
-                    <TextBlock EventDetailDates FontSize="18"/>
-                    <TextBlock EventDetailDescription FontSize="24" Margin="8,0,0,0"/>
+                <Button 
+                    x:Name="BackButton" 
+                    Grid.Row="0" 
+                    Content="Return to Main Page" 
+                    FontSize="30" 
+                    Click="BackButton_Click"
+                    HorizontalAlignment="Center"
+                    Width="298"/>
+                <Button 
+                    x:Name="NewEventButton" 
+                    Grid.Row="1" 
+                    Content="+ Add New Event" 
+                    FontSize="36" 
+                    Click="NewEventButton_Click" 
+                    Background="Orange" 
+                    Foreground="White" 
+                    HorizontalAlignment="Center"/>
+                <StackPanel x:Name="EventDetailsStackPanel" Grid.Row="2" Visibility="Collapsed" Margin="0,10,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="CloseEventDetailsButton" Grid.Column="0" Content="X Event Details" HorizontalAlignment="Center" Width="130" Click="CloseEventDetailsButton_Click"/>
+                        <Button x:Name="EditEventButton" Grid.Column="1" Content="Edit This Event" HorizontalAlignment="Center" Width="130" Background="Teal" Foreground="White" Click="EditEventButton_Click"/>
+                    </Grid>
+                    <TextBlock x:Name="EventDetailTitle" FontSize="24" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                    <TextBlock x:Name="EventDetailDates" FontSize="8" TextWrapping="Wrap"/>
+                    <TextBlock x:Name="EventDetailDescription" FontSize="14" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                    <TextBlock x:Name="EventDetailTags" FontSize="14" TextWrapping="Wrap"/>
+                    <Rectangle HorizontalAlignment="Stretch" Fill="Black" Height="1" Margin="0,12,0,12"/>
                 </StackPanel>
             </Grid>
             <Grid Grid.Column="1" Background="WhiteSmoke">
@@ -42,22 +69,6 @@
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <!--<Button
-                        Grid.Column="0"
-                        x:Name="TimelinePreviousButton"
-                        Height="800" 
-                        Content="Prev"
-                        Padding="10"
-                        Background="WhiteSmoke"
-                        Click="TimelinePreviousButton_Click"/>
-                    <Button 
-                        Grid.Column="2"
-                        x:Name="TimelineNextButton"
-                        Height="800"
-                        Content="Next"
-                        Padding="10"
-                        Background="WhiteSmoke"
-                        Click="TimelineNextButton_Click"/>-->
 
                     <ScrollViewer
                         Grid.Column="1"
@@ -67,17 +78,6 @@
                         VerticalScrollBarVisibility="Auto"
                         HorizontalAlignment="Center"/>
                 </Grid>
-                
-                
-                <!--<ListView
-                    x:Name="ListView1"
-                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                    ScrollViewer.HorizontalScrollMode="Enabled"
-                    ScrollViewer.IsHorizontalRailEnabled="True"
-                    Background="Gray" 
-                    VerticalAlignment="Center">
-                    <StackPanel x:Name="TimelineStackPanel" Orientation="Horizontal" VerticalAlignment="Center"/>
-                </ListView> -->
             </Grid>
         </Grid>
     </Grid>

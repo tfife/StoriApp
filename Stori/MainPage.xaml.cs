@@ -73,7 +73,9 @@ namespace Stori
                     Width = buttonWidth,
                     FontSize = buttonFontSize,
                     Margin = buttonMargin,
-                    Content = timeline.name
+                    Content = timeline.name,
+                    Background = new SolidColorBrush(Windows.UI.Colors.Teal),
+                    Foreground = new SolidColorBrush(Windows.UI.Colors.White)
                 };
                 timelineButton.AddHandler(UIElement.TappedEvent, new TappedEventHandler((object sender, TappedRoutedEventArgs e) =>
                 {

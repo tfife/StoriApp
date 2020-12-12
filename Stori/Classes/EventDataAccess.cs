@@ -42,6 +42,7 @@ namespace Stori.Classes
                         maxId = myEvent.eventId + 1;
                     }
                 }
+                newEvent.eventId = maxId;
                 allEvents.Add(newEvent);
             }
 
@@ -75,14 +76,49 @@ namespace Stori.Classes
                     if (allEvents[i].eventId == updateEvent.eventId)
                     {
                         allEvents[i] = updateEvent;
+
+                        var newFile = await localFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+                        var json = JsonConvert.SerializeObject(allEvents);
+                        await FileIO.WriteTextAsync(newFile, json);
                         break;
                     }
                 }
             }
+        }
 
-            var newFile = await localFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-            var json = JsonConvert.SerializeObject(allEvents);
-            await FileIO.WriteTextAsync(newFile, json);
+        public async Task DeleteEvent(Event deleteEvent)
+        {
+            List<Classes.Event> allEvents;
+
+            string fileName = "events" + deleteEvent.timeline.timeSystem.timelineId.ToString() + ".json";
+            var file = await localFolder.TryGetItemAsync(fileName) as IStorageFile;
+            if (file == null)
+            {
+                return;
+            }
+            else
+            {
+                var text = await FileIO.ReadTextAsync(file);
+                allEvents = JsonConvert.DeserializeObject<List<Classes.Event>>(text);
+
+                if (allEvents == null)
+                {
+                    return;
+                }
+
+                for (int i = 0; i < allEvents.Count; i++)
+                {
+                    if (allEvents[i].eventId == deleteEvent.eventId)
+                    {
+                        allEvents.Remove(allEvents[i]);
+
+                        var newFile = await localFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+                        var json = JsonConvert.SerializeObject(allEvents);
+                        await FileIO.WriteTextAsync(newFile, json);
+                        break;
+                    }
+                }
+            }
         }
 
         public async Task<List<Event>> getAllEventsForTimeline(TimeSystem timeline)

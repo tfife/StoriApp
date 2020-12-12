@@ -18,7 +18,7 @@ namespace Stori.Classes
 
         public Timeline(
             TimeSystem timeSystem,
-            ZoomLevel currentZoomLevel = ZoomLevel.DayHour,
+            ZoomLevel currentZoomLevel = ZoomLevel.MonthDay,
             int ticksPerPage = 800)
         {
             this.timeSystem = timeSystem;
