@@ -66,19 +66,17 @@ namespace Stori
             timeSystem.secInMin = (int)NumSeconds.Value;
             timeSystem.minInHour = (int)NumMinutes.Value;
             timeSystem.hourInDay = (int)NumHours.Value;
+
             if (VariableDaysCheckBox.IsChecked == false)
             {
-                if (timeSystem.daysInMonths == null)
-                {
-                    timeSystem.daysInMonths = new List<int>();
-                }
-
-                timeSystem.daysInMonths.Clear();
-
+                List<int> daysInMonths = new List<int>();
+                
                 for (int i = 0; i < (int)NumMonths.Value; i++)
                 {
-                    timeSystem.daysInMonths.Add((int)NumDays.Value);
+                    daysInMonths.Add((int)NumDays.Value);
                 }
+
+                this.timeSystem.SetDaysInMonths(daysInMonths);
             }            
             timeSystem.monInYear = (int)NumMonths.Value;
 
@@ -156,5 +154,6 @@ namespace Stori
         {
             NumDays.IsEnabled = !(bool)((CheckBox)sender).IsChecked;
         }
+
     }
 }

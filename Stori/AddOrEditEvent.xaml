@@ -1,0 +1,81 @@
+﻿<Page
+    x:Class="Stori.AddOrEditEvent"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Stori"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <StackPanel>
+            <TextBlock FontSize="36" x:Name="PageHeaderText"/>
+            <TextBlock FontSize="24" x:Name="StartDateLabel" Text="Event Start Date: "/>
+            <StackPanel Orientation="Horizontal" x:Name="StartDateControls">
+                <TextBlock x:Name="StartYearLabel"/>
+                <muxc:NumberBox x:Name="StartYearNumber" ValueChanged="StartYearNumber_ValueChanged"/>
+                <TextBlock x:Name="StartMonthLabel" Visibility="Collapsed"/>
+                <muxc:NumberBox x:Name="StartMonthNumber" Minimum="1" Visibility="Collapsed" ValueChanged="StartMonthNumber_ValueChanged"/>
+                <TextBlock x:Name="StartDayLabel" Visibility="Collapsed"/>
+                <muxc:NumberBox x:Name="StartDayNumber" Minimum="1" Visibility="Collapsed" />
+                <TextBlock x:Name="AddMonthOrDayTextButton" Foreground="Orange" Tapped="AddMonthOrDayTextButton_Tapped" Text="+ Add"/>
+            </StackPanel>
+            
+            <StackPanel Orientation="Horizontal" x:Name="StartDateControls2">
+                <TextBlock x:Name="StartHourLabel" Visibility="Collapsed"/>
+                <muxc:NumberBox x:Name="StartHourNumber" Minimum="0" Visibility="Collapsed" />
+                <TextBlock x:Name="StartMinuteLabel" Visibility="Collapsed"/>
+                <muxc:NumberBox x:Name="StartMinuteNumber" Minimum="0" Visibility="Collapsed" />
+                <TextBlock x:Name="StartSecondLabel" Visibility="Collapsed"/>
+                <muxc:NumberBox x:Name="StartSecondNumber" Minimum="0" Visibility="Collapsed"/>
+                <TextBlock x:Name="AddTimeUnitTextButton" Visibility="Collapsed" Foreground="Orange" Tapped="AddTimeUnitTextButton_Tapped"/>
+            </StackPanel>
+            
+            <TextBlock FontSize="24" x:Name="EndDateLabel" Text="Event End Date: "/>
+            <StackPanel Orientation="Horizontal" x:Name="EndDateControls">
+                <TextBlock x:Name="EndYearLabel"/>
+                <muxc:NumberBox x:Name="EndYearNumber" ValueChanged="EndYearNumber_ValueChanged"/>
+                <TextBlock x:Name="EndMonthLabel" Visibility="Collapsed"/>
+                <muxc:NumberBox x:Name="EndMonthNumber" Minimum="0" Visibility="Collapsed" ValueChanged="EndMonthNumber_ValueChanged"/>
+                <TextBlock x:Name="EndDayLabel" Visibility="Collapsed"/>
+                <muxc:NumberBox x:Name="EndDayNumber" Minimum="0" Visibility="Collapsed"/>
+            </StackPanel>
+            
+            <StackPanel Orientation="Horizontal" x:Name="EndDateControls2">
+                <TextBlock x:Name="EndHourLabel" Visibility="Collapsed"/>
+                <muxc:NumberBox x:Name="EndHourNumber" Minimum="0" Visibility="Collapsed"/>
+                <TextBlock x:Name="EndMinuteLabel" Visibility="Collapsed"/>
+                <muxc:NumberBox x:Name="EndMinuteNumber" Minimum="0" Visibility="Collapsed"/>
+                <TextBlock x:Name="EndSecondLabel" Visibility="Collapsed"/>
+                <muxc:NumberBox x:Name="EndSecondNumber" Minimum="0" Visibility="Collapsed"/>
+            </StackPanel>
+            <TextBlock FontSize="24" x:Name="EventTitleLabel" Text="Event Title: "/>
+            <TextBox x:Name="EventTitleTextBox" />
+            <TextBlock FontSize="24" x:Name="DescriptionLabel" Text="Event Description: "/>
+            <TextBox x:Name="EventDescriptionTextBox"/>
+            <TextBlock FontSize="24" x:Name="TagsLabel" Text="Event Tags:"/>
+            <GridView>
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsWrapGrid x:Name="TagList" Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+            </GridView>
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="NewTagNameTextBox"/>
+                <Button x:Name="AddTagButton" Content="Add"/>
+            </StackPanel>
+            <TextBlock x:Name="DateOrderErrorText" Foreground="Red" Text="End Date must be later than Start Date" Visibility="Collapsed"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" x:Name="CancelButton" Click="CancelButton_Click" HorizontalAlignment="Center" Content="Cancel"/>
+                <Button Grid.Column="1" x:Name="SubmitButton" Click="SubmitButton_Click" HorizontalAlignment="Center" Content="Save"/>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Page>

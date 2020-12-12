@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -32,11 +33,18 @@ namespace Stori
         int lineWidth = 3;
         int timelineWidth = 6000;
         int timelineBottomPadding = 300;
-        int timelineTopPadding = 3000;
-        int pageIndex = 0;
+        int timelineTopPadding = 100;
+        //int pageIndex = 0;
+        int initialOffset = 100;
 
         Canvas tlCanvas;
         Classes.Timeline timeline;
+        List<Classes.Event> allEvents;
+        List<Classes.Event> filteredEvents;
+        List<string> tags;
+        List<string> activeTags;
+
+        Classes.EventDataAccess dataAccess = new Classes.EventDataAccess();
 
         public Timeline()
         {
@@ -52,13 +60,13 @@ namespace Stori
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is Classes.Timeline)
+            if (e.Parameter is Classes.TimeSystem)
             {
-                this.timeline = (Classes.Timeline)e.Parameter;
+                this.timeline = new Classes.Timeline((Classes.TimeSystem)e.Parameter);
 
                 populateTimeline();
-                scrollToBottom();
-                populateEvents();
+                //scrollToBottom();
+                //populateEvents();
             }
             base.OnNavigatedTo(e);
 
@@ -69,22 +77,182 @@ namespace Stori
             return timelineBottomPadding + timelineTopPadding + lineWidth;
         }
 
-        void populateTimeline()
+        async void populateTimeline()
         {
-            //clear existing timeline
+            //clear existing canvas
             tlCanvas.Children.Clear();
 
-            //add label to the top 
-            TimelineLabelTextBlock.Text = timeline.GetLabelForPage(pageIndex);
+            await this.getEventsFromFile();
 
-            //add the ticks to the main line
-            Classes.CustomDateTime refDateTime = timeline.GetStartDateForPage(pageIndex).GetDateTime();
-            int offset = eventPadding;
+            //if there are no events, just go to the event creation page
+            if (allEvents == null || allEvents.Count == 0)
+            {
+                NavigateToNewEvent();
+                return;
+            }
+            
+            this.allEvents = new List<Classes.Event>(allEvents).OrderBy(o => o.startDateTime).ToList();
+
+            List<Classes.Event> allEventsByEndDate = new List<Classes.Event>(allEvents).OrderBy(o => o.endDateTime).ToList();
+
+            //Debug.WriteLine(allEventsByEndDate.ToString());
+            FilterEvents();
+
+            int offset = initialOffset;
+            List<int> layerOffsets = new List<int>();
+            List<List<Rectangle>> eventItemsByLayer = new List<List<Rectangle>>();
+            Classes.CustomDateTime refDateTime = filteredEvents[0].startDateTime.GetDateTime();
+
             bool topLabelRequired = true;
             int tickCount = 0;
 
-            while (refDateTime <= timeline.GetEndDateForPage(pageIndex).GetDateTime())
+            //Canvas.SetTop(topTick, timelineTopPadding);
+            List<UIElement> noVerticalOffset = new List<UIElement>();
+
+            //Canvas.SetTop(topLabel, timelineTopPadding - tickHeight - 48);
+            List<TextBlock> topLabels = new List<TextBlock>();
+
+            //Canvas.SetTop(bottomLabel, timelineTopPadding + tickHeight);
+            List<TextBlock> bottomLabels = new List<TextBlock>();
+
+            //for each event, add ticks leading up to it and then the event itself.
+            for (int index = 0; index < filteredEvents.Count; index++)
             {
+                Classes.Event currentEvent = filteredEvents[index];
+
+                //Debug.WriteLine(currentEvent.startDateTime.year.ToString());
+
+                //add any/all ticks previous to the event start date
+                while (refDateTime < currentEvent.startDateTime)
+                {
+                    //add the top tick
+                    Line topTick = new Line();
+                    topTick.Stroke = new SolidColorBrush(Windows.UI.Colors.Black);
+                    topTick.StrokeThickness = lineWidth;
+
+                    topTick.X1 = 0;
+                    topTick.Y1 = 0;
+                    topTick.X2 = 0;
+                    topTick.Y2 = 0 - tickHeight;
+
+                    Canvas.SetLeft(topTick, offset);
+                    noVerticalOffset.Add(topTick);
+
+                    //also add a label if necessary
+                    if (topLabelRequired && !this.timeline.IsBottomTickRequired(refDateTime))
+                    {
+                        TextBlock topLabel = new TextBlock
+                        {
+                            FontSize = 18,
+                            TextAlignment = TextAlignment.Center,
+                            Text = timeline.GetTopTickLabel(refDateTime),
+                            Width = 100,
+                        };
+                                                
+                        Canvas.SetLeft(topLabel, offset - 50);
+                        topLabels.Add(topLabel);
+                    }
+
+                    //if necessary, add the bottom tick
+                    if (timeline.IsBottomTickRequired(refDateTime))
+                    {
+                        topLabelRequired = false;
+                        Line bottomTick = new Line
+                        {
+                            Stroke = new SolidColorBrush(Windows.UI.Colors.Black),
+                            StrokeThickness = lineWidth,
+
+                            X1 = 0,
+                            Y1 = 0,
+                            X2 = 0,
+                            Y2 = 0 + tickHeight
+                        };
+
+                        Canvas.SetLeft(bottomTick, offset);
+
+                        noVerticalOffset.Add(bottomTick);
+
+                        //also add a label
+                        TextBlock bottomLabel = new TextBlock
+                        {
+                            FontSize = 18,
+                            TextAlignment = TextAlignment.Center,
+                            Text = timeline.GetBottomTickLabel(refDateTime),
+                            Width = 150,
+                        };
+
+                        
+                        Canvas.SetLeft(bottomLabel, offset - 75);
+                        bottomLabels.Add(bottomLabel);
+                    }
+
+                    topLabelRequired = !topLabelRequired;
+
+                    offset += tickWidth;
+                    timeline.IterateTickCustomDateTime(refDateTime);
+                    tickCount++;
+
+                    //Debug.WriteLine("end of iteration for while loop");
+                }
+
+                //now do the event itself
+                int width = this.timeline.GetEventWidth(currentEvent, tickWidth, eventPadding);
+
+                //Debug.WriteLine("GetEventWidth finished");
+                //create the event item
+                Rectangle eventItem = new Rectangle()
+                {
+                    Stroke = new SolidColorBrush(Windows.UI.Colors.Black),
+                    Fill = new SolidColorBrush(Windows.UI.Colors.SlateGray),
+                    Height = this.eventHeight,
+                    Width = width,
+                    RadiusX = 10,
+                    RadiusY = 10
+                };
+                Canvas.SetLeft(eventItem, offset - eventPadding);
+
+                int eventEnd = offset - eventPadding + width;
+
+                //now figure out which layer to put it in so a vertical height can be given later
+                int eventLayer = 0;
+                bool isLayerAssigned = false;
+
+                //for each later in the offsets....
+                for (int i = 0; i < layerOffsets.Count; i++)
+                {
+                    //if the offset for this layer is less than the current offset, then we're good to add it to this layer
+                    if (layerOffsets[i] < offset - eventPadding)
+                    {
+                        //assign the layer, say it's been assigned, and set the new layer offset
+                        eventLayer = i;
+                        isLayerAssigned = true;
+                        layerOffsets[i] = eventEnd;
+                        Debug.WriteLine("Event range: " + (offset - eventPadding) + "-" + eventEnd);
+                        break;
+                    }
+                }
+
+                Debug.WriteLine("Event range: " + (offset - eventPadding) + "-" + eventEnd);
+                // if none of the currently existing offsets is less than the needed one
+                //add a fresh layer
+                if (isLayerAssigned == false)
+                {
+                    Debug.WriteLine("add a layer");
+                    layerOffsets.Add(eventEnd);
+                    eventItemsByLayer.Add(new List<Rectangle>());
+                    eventLayer = layerOffsets.Count - 1;
+                }
+                eventItemsByLayer[eventLayer].Add(eventItem);
+            }
+
+            //Debug.WriteLine("about to enter end day loop");
+            //repeat adding ticks until the latest end date
+            while (refDateTime <= allEventsByEndDate[allEventsByEndDate.Count - 1].endDateTime)
+            {
+                //Debug.WriteLine("begin end day loop");
+                //Debug.WriteLine("end date month =" + allEventsByEndDate[allEventsByEndDate.Count - 1].endDateTime.month.ToString());
+                //Debug.WriteLine("ref date month =" + refDateTime.month.ToString());
+
                 //add the top tick
                 var topTick = new Line();
                 topTick.Stroke = new SolidColorBrush(Windows.UI.Colors.Black);
@@ -95,18 +263,11 @@ namespace Stori
                 topTick.X2 = 0;
                 topTick.Y2 = 0 - tickHeight;
 
-                topTick.Tapped += (object sender, TappedRoutedEventArgs e) =>
-                {
-                    DateTickClicked(refDateTime.GetDateTime());
-                };
-
-                Canvas.SetTop(topTick, timelineTopPadding);
                 Canvas.SetLeft(topTick, offset);
-
-                tlCanvas.Children.Add(topTick);
+                noVerticalOffset.Add(topTick);
 
                 //also add a label if necessary
-                if (topLabelRequired)
+                if (topLabelRequired && !this.timeline.IsBottomTickRequired(refDateTime))
                 {
                     TextBlock topLabel = new TextBlock
                     {
@@ -116,21 +277,14 @@ namespace Stori
                         Width = 100,
                     };
 
-                    topLabel.Tapped += (object sender, TappedRoutedEventArgs e) =>
-                    {
-                        DateTickClicked(refDateTime.GetDateTime());
-                    };
-
-                    Canvas.SetTop(topLabel, timelineTopPadding - tickHeight - 48);
                     Canvas.SetLeft(topLabel, offset - 50);
-                    tlCanvas.Children.Add(topLabel);
+                    topLabels.Add(topLabel);
                 }
-
-                topLabelRequired = !topLabelRequired;
 
                 //if necessary, add the bottom tick
                 if (timeline.IsBottomTickRequired(refDateTime))
                 {
+                    topLabelRequired = false;
                     Line bottomTick = new Line
                     {
                         Stroke = new SolidColorBrush(Windows.UI.Colors.Black),
@@ -142,10 +296,9 @@ namespace Stori
                         Y2 = 0 + tickHeight
                     };
 
-                    Canvas.SetTop(bottomTick, timelineTopPadding);
                     Canvas.SetLeft(bottomTick, offset);
 
-                    tlCanvas.Children.Add(bottomTick);
+                    noVerticalOffset.Add(bottomTick);
 
                     //also add a label
                     TextBlock bottomLabel = new TextBlock
@@ -156,19 +309,100 @@ namespace Stori
                         Width = 150,
                     };
 
-                    Canvas.SetTop(bottomLabel, timelineTopPadding + tickHeight);
-                    Canvas.SetLeft(bottomLabel, offset - 75);
-                    tlCanvas.Children.Add(bottomLabel);
 
+                    Canvas.SetLeft(bottomLabel, offset - 75);
+                    bottomLabels.Add(bottomLabel);
                 }
+
+                topLabelRequired = !topLabelRequired;
+
                 offset += tickWidth;
                 timeline.IterateTickCustomDateTime(refDateTime);
                 tickCount++;
+
+                //Debug.WriteLine("end of while iteration");
+            }
+
+
+            //ADD ONE MORE TICK 
+
+            //add the last top tick
+            Line lastTick = new Line();
+            lastTick.Stroke = new SolidColorBrush(Windows.UI.Colors.Black);
+            lastTick.StrokeThickness = lineWidth;
+
+            lastTick.X1 = 0;
+            lastTick.Y1 = 0;
+            lastTick.X2 = 0;
+            lastTick.Y2 = 0 - tickHeight;
+
+            Canvas.SetLeft(lastTick, offset);
+            noVerticalOffset.Add(lastTick);
+
+            //also add the last top label if necessary
+            if (topLabelRequired && !this.timeline.IsBottomTickRequired(refDateTime))
+            {
+                TextBlock topLabel = new TextBlock
+                {
+                    FontSize = 18,
+                    TextAlignment = TextAlignment.Center,
+                    Text = timeline.GetTopTickLabel(refDateTime),
+                    Width = 100,
+                };
+
+                Canvas.SetLeft(topLabel, offset - 50);
+                topLabels.Add(topLabel);
+            }
+
+            //if necessary, add the last bottom tick
+            if (timeline.IsBottomTickRequired(refDateTime))
+            {
+                topLabelRequired = false;
+                Line bottomTick = new Line
+                {
+                    Stroke = new SolidColorBrush(Windows.UI.Colors.Black),
+                    StrokeThickness = lineWidth,
+
+                    X1 = 0,
+                    Y1 = 0,
+                    X2 = 0,
+                    Y2 = 0 + tickHeight
+                };
+
+                Canvas.SetLeft(bottomTick, offset);
+
+                noVerticalOffset.Add(bottomTick);
+
+                //also add a label
+                TextBlock bottomLabel = new TextBlock
+                {
+                    FontSize = 18,
+                    TextAlignment = TextAlignment.Center,
+                    Text = timeline.GetBottomTickLabel(refDateTime),
+                    Width = 150,
+                };
+
+
+                Canvas.SetLeft(bottomLabel, offset - 75);
+                bottomLabels.Add(bottomLabel);
+            }
+
+
+            //Now add all the Top levels
+            timelineTopPadding += tickHeight;
+            timelineTopPadding += 50; //room for the labels
+
+            timelineTopPadding += (eventHeight + eventPadding) * layerOffsets.Count();
+            if (timelineTopPadding < 1000)
+            {
+                timelineTopPadding = 1000;
             }
 
             //set the canvas width to fit all ticks and add the line
-            tlCanvas.Width = offset;
+            tlCanvas.Width = offset += initialOffset;
+            tlCanvas.Height = timelineTopPadding + timelineBottomPadding;
 
+            //add the main line
             var line = new Line();
             line.Stroke = new SolidColorBrush(Windows.UI.Colors.Black);
             line.StrokeThickness = lineWidth;
@@ -182,8 +416,45 @@ namespace Stori
             Canvas.SetLeft(line, 0);
 
             tlCanvas.Children.Add(line);
+
+            //add all the children elements now that top is known
+            foreach (Line tick in noVerticalOffset)
+            {
+                Canvas.SetTop(tick, timelineTopPadding);
+                tlCanvas.Children.Add(tick);
+            }
+            int topLabelTop = timelineTopPadding - tickHeight - 48;
+            foreach (TextBlock label in topLabels)
+            {
+                Canvas.SetTop(label, topLabelTop);
+                tlCanvas.Children.Add(label);
+            }
+            foreach (TextBlock label in bottomLabels)
+            {
+                Canvas.SetTop(label, timelineTopPadding + tickHeight + eventPadding);
+                tlCanvas.Children.Add(label);
+            }
+            //add the events
+            for (int i = 0; i < eventItemsByLayer.Count; i++)
+            {
+                Debug.WriteLine("layer = " + i.ToString());
+                foreach (Rectangle eventItem in eventItemsByLayer[i])
+                {
+                    Canvas.SetTop(eventItem, (topLabelTop - eventHeight - eventPadding) - i * (eventHeight + eventPadding));
+                    tlCanvas.Children.Add(eventItem);
+                }
+            }
+
             //set content to be the canvas
             ScrollableCanvasContainer.Content = tlCanvas;
+            scrollToBottom();
+        }
+
+        async Task getEventsFromFile()
+        {
+            this.allEvents = await dataAccess.getAllEventsForTimeline(this.timeline.timeSystem);
+
+            Debug.WriteLine("inside getEventsFromFile");
         }
 
         async void scrollToBottom()
@@ -192,64 +463,24 @@ namespace Stori
             ScrollableCanvasContainer.ChangeView(null, timelineTopPadding, null);
         }
 
-        void populateEvents()
+        private void FilterEvents()
         {
+            Debug.WriteLine("entered FilterEvents()");
+            this.filteredEvents = this.allEvents;
 
+            Debug.WriteLine("FilterEvents Finished!");
         }
 
-        private void TimelineNextButton_Click(object sender, RoutedEventArgs e)
-        {
-            pageIndex++;
-            ControlEnabledButtons();
-            populateTimeline();
 
+        private void NewEventButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigateToNewEvent();
         }
 
-        private void TimelinePreviousButton_Click(object sender, RoutedEventArgs e)
+        private void NavigateToNewEvent()
         {
-            pageIndex--;
-            ControlEnabledButtons();
-            populateTimeline();
-        }
-
-        void ControlEnabledButtons()
-        {
-            if (pageIndex <= 0)
-            {
-                //just in case it somehow got out of range
-                pageIndex = 0;
-                //disable prev button
-                TimelinePreviousButton.IsEnabled = false;
-            }
-            else
-            {
-                //enable prev button
-                TimelinePreviousButton.IsEnabled = true;
-            }
-
-            if (pageIndex >= timeline.pageLabels.Count - 1)
-            {
-                //just in case it somehow got out of range
-                pageIndex = timeline.pageLabels.Count - 1;
-                //disable next button
-                TimelineNextButton.IsEnabled = false;
-            }
-            else
-            {
-                //enable next button
-                TimelineNextButton.IsEnabled = true;
-            }
-        }
-
-        void DateTickClicked(Classes.CustomDateTime date)
-        {
-            if (timeline.ZoomIn())
-            {
-                pageIndex = timeline.GetPageIndexForCustomDateTime(date);
-                populateTimeline();
-                scrollToBottom();
-                populateEvents();
-            }
+            //TimelineLabelTextBlock.Text  = this.timeline.timeSystem.GetDaysInMonthText();
+            this.Frame.Navigate(typeof(AddOrEditEvent), this.timeline.timeSystem);
         }
     }
 }

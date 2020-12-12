@@ -13,13 +13,17 @@
                 <ColumnDefinition Width="300"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Grid Background="LightGray">
+            <Grid Background="LightGray" Grid.Column="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Text="Welcome to the Timeline" FontSize="50"/>
-                <TextBlock Grid.Row="1" Text="Side Nav" FontSize="50"/>
+                <Button x:Name="NewEventButton" Grid.Row="0" Content="Create New Event" FontSize="36" Click="NewEventButton_Click"/>
+                <StackPanel Grid.Row="1">
+                    <TextBlock EventDetailTitle FontSize="32" FontWeight="SemiBold"/>
+                    <TextBlock EventDetailDates FontSize="18"/>
+                    <TextBlock EventDetailDescription FontSize="24" Margin="8,0,0,0"/>
+                </StackPanel>
             </Grid>
             <Grid Grid.Column="1" Background="WhiteSmoke">
                 <Grid.RowDefinitions>
@@ -38,7 +42,7 @@
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Button
+                    <!--<Button
                         Grid.Column="0"
                         x:Name="TimelinePreviousButton"
                         Height="800" 
@@ -53,7 +57,7 @@
                         Content="Next"
                         Padding="10"
                         Background="WhiteSmoke"
-                        Click="TimelineNextButton_Click"/>
+                        Click="TimelineNextButton_Click"/>-->
 
                     <ScrollViewer
                         Grid.Column="1"

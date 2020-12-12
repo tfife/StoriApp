@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Stori.Classes
 {
-    class CustomDateTime
+    class CustomDateTime : IComparable<CustomDateTime>
     {
         public int year, month, day, hour, minute, second, dayNameIndex;
-        TimeSystem timeSystem;
+        public TimeSystem timeSystem;
 
         public CustomDateTime(
             TimeSystem timeSystem,
@@ -58,7 +58,7 @@ namespace Stori.Classes
                 this.AddYears(1);
             }
             //handle months with fewer days than the original date
-            if(this.day > this.timeSystem.daysInMonths[this.month - 1])
+            if(this.day > this.timeSystem.getDaysInMonth(this.month, this.year))
             {
                 this.month += 1;
                 if (this.month > this.timeSystem.monInYear)
@@ -66,12 +66,13 @@ namespace Stori.Classes
                     this.month = 1;
                     this.year += 1;
                 }
-                this.day %= this.timeSystem.daysInMonths[this.month - 1];
+                this.day %= this.timeSystem.getDaysInMonth(this.month, this.year);
             }
         }
 
         public void AddDays(int numDays)
         {
+            handleUnwantedNegatives();
             this.day += numDays;
 
             if (dayNameIndex != -1)
@@ -81,9 +82,9 @@ namespace Stori.Classes
             }
             
             //handle overflow into months
-            while (this.day > this.timeSystem.daysInMonths[this.month - 1])
+            while (this.day > this.timeSystem.getDaysInMonth(this.month, this.year))
             {
-                this.day -= this.timeSystem.daysInMonths[this.month - 1];
+                this.day -= this.timeSystem.getDaysInMonth(this.month, this.year);
                 this.month += 1;
                 //if we've gone over the month limit for a year
                 if (this.month > this.timeSystem.monInYear)
@@ -98,6 +99,7 @@ namespace Stori.Classes
 
         public void AddHours(int numHours)
         {
+            handleUnwantedNegatives();
             this.hour += numHours;
             //handle overflow into next day(s)
             this.AddDays(this.hour / this.timeSystem.hourInDay);
@@ -106,6 +108,7 @@ namespace Stori.Classes
 
         public void AddMinutes(int numMinutes)
         {
+            handleUnwantedNegatives();
             this.minute += numMinutes;
             //handle overflow into other hour(s)
             this.AddHours(this.minute / this.timeSystem.minInHour);
@@ -114,6 +117,7 @@ namespace Stori.Classes
 
         public void AddSeconds(int numSeconds)
         {
+            handleUnwantedNegatives();
             this.second += numSeconds;
             //handle overflow into other minute(s)
             this.AddMinutes(this.second / this.timeSystem.secInMin);
@@ -122,6 +126,7 @@ namespace Stori.Classes
 
         public string GetDayName()
         {
+            handleUnwantedNegatives();
             if (dayNameIndex >= 0 && dayNameIndex < this.timeSystem.dayNames.Count())
             {
                 return this.timeSystem.dayNames[dayNameIndex];
@@ -138,11 +143,47 @@ namespace Stori.Classes
             return "inv i:" + this.month.ToString();
         }
 
+        public int CompareTo(CustomDateTime other)
+        {
+            handleUnwantedNegatives();
+            other.handleUnwantedNegatives();
+
+            if (this > other)
+            {
+                return 1;
+            }
+            else if (this == other)
+            {
+                return 0;
+            }
+            return -1;
+        }
+
+        public void handleUnwantedNegatives()
+        {
+            if (second < 0)
+            {
+                second = 0;
+            }
+            if (minute < 0)
+            {
+                minute = 0;
+            }
+            if (day < 1)
+            {
+                day = 1;
+            }
+            if (month < 1)
+            {
+                month = 1;
+            }
+        }
+
         //overloaded operators
         public static bool operator ==(CustomDateTime lhs, CustomDateTime rhs)
         {
             if (lhs.year == rhs.year &&
-                lhs.month == rhs.month &&
+                (lhs.month == rhs.month) &&
                 lhs.day == rhs.day &&
                 lhs.hour == rhs.hour &&
                 lhs.minute == rhs.minute &&

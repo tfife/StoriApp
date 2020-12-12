@@ -111,6 +111,18 @@ namespace Stori
                 row.Children.Add(numberBox);
                 row.Children.Add(text2);
 
+                if (i == 2 && this.timeSystem.leapYearEnabled)
+                {
+                    CheckBox useLeapYearCheckBox = new CheckBox()
+                    {
+                        IsChecked = true,
+                        Content = "use leap year (follows standard rules)"
+                    };
+
+                    useLeapYearCheckBox.AddHandler(UIElement.TappedEvent, new TappedEventHandler(UseLeapYearCheckBox_Click), true);
+                    row.Children.Add(useLeapYearCheckBox);
+                }
+
                 MonthRowsStackPanel.Children.Add(row);
             }
         }
@@ -128,12 +140,14 @@ namespace Stori
             }
             else
             {
-                this.timeSystem.daysInMonths.Clear();
+                List<int> daysInMonths = new List<int>();
 
                 foreach (StackPanel panel in MonthRowsStackPanel.Children)
                 {
-                    this.timeSystem.daysInMonths.Add((int)((muxc.NumberBox)panel.Children[1]).Value);
+                    daysInMonths.Add((int)((muxc.NumberBox)panel.Children[1]).Value);
                 }
+
+                this.timeSystem.SetDaysInMonths(daysInMonths);
 
                 this.SaveAndShowTimeline();
             }
@@ -141,20 +155,11 @@ namespace Stori
 
         private async void SaveAndShowTimeline()
         {
-            Classes.CustomDateTime startDate = new Classes.CustomDateTime(timeSystem, 2020, 1, 1, dayNameIndex: 3);
-            Classes.CustomDateTime endDate = new Classes.CustomDateTime(timeSystem, 2121, 3, 31);
-
-            Classes.Timeline newTimeline = new Classes.Timeline(
-                startDate,
-                endDate,
-                3,
-                timeSystem,
-                currentZoomLevel: Classes.Timeline.ZoomLevel.YearMonth);
             Classes.TimelineDataAccess dataAccess = new Classes.TimelineDataAccess();
 
-            await dataAccess.SaveNewTimeline(newTimeline);
+            await dataAccess.SaveNewTimeline(timeSystem);
 
-            this.Frame.Navigate(typeof(Timeline), newTimeline);
+            this.Frame.Navigate(typeof(AddOrEditEvent), timeSystem);
 
         }
 
@@ -165,12 +170,17 @@ namespace Stori
                 if ((int)((muxc.NumberBox)panel.Children[1]).Value < 1)
                 {
                     ((muxc.NumberBox)panel.Children[1]).Focus(FocusState.Programmatic);
-                    MonthNameLabel.Text = "BAD";
+                    //MonthNameLabel.Text = "BAD";
                     return false;
                 }
             }
-            MonthNameLabel.Text = "WORKED";
+            //MonthNameLabel.Text = "WORKED";
             return true;
+        }
+
+        private void UseLeapYearCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            this.timeSystem.leapYearEnabled = ((CheckBox)sender).IsChecked == true;
         }
     }
 }

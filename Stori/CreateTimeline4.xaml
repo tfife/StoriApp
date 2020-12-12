@@ -11,9 +11,11 @@
 
     <Grid>
         <ScrollViewer>
+            
             <StackPanel>
                 <TextBlock FontSize="36" Text="You have some variable times here\n"/>
                 <TextBlock FontSize="36" x:Name="MonthNameLabel"/>
+                <TextBlock x:Name="TestTextBlock" Text="test: "/>
                 <StackPanel x:Name="MonthRowsStackPanel"/>
                 
                 <StackPanel Orientation="Horizontal">

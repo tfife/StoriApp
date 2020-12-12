@@ -98,6 +98,7 @@ namespace Stori
                 60,
                 60,
                 true,
+                true,
                 new List<string>() { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" },
                 new List<string>() { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" },
                 new List<int>() { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 });

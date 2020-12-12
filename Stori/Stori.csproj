@@ -116,11 +116,15 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AddOrEditEvent.xaml.cs">
+      <DependentUpon>AddOrEditEvent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Classes\CustomDateTime.cs" />
     <Compile Include="Classes\Event.cs" />
+    <Compile Include="Classes\EventDataAccess.cs" />
     <Compile Include="Classes\Timeline.cs" />
     <Compile Include="Classes\TimelineDataAccess.cs" />
     <Compile Include="Classes\TimeSystem.cs" />
@@ -164,6 +168,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="AddOrEditEvent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CreateTimeline1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

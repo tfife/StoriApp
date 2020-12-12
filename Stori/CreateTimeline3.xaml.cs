@@ -174,9 +174,9 @@ namespace Stori
         private void RemoveDayRow_Click(object sender, TappedRoutedEventArgs e)
         {
             DayRowsStackPanel.Children.Remove(VisualTreeHelper.GetParent((Button)sender) as UIElement);
-            for (int i = 1; i <= DayRowsStackPanel.Children.Count(); i++)
+            for (int i = 0; i < DayRowsStackPanel.Children.Count(); i++)
             {
-                ((TextBlock)((StackPanel)DayRowsStackPanel.Children[i]).Children[0]).Text = i.ToString() + ". name: ";
+                ((TextBlock)((StackPanel)DayRowsStackPanel.Children[i]).Children[0]).Text = (i + 1).ToString() + ". name: ";
             }
         }
         private void BackButton_Click(object sender, RoutedEventArgs e)
